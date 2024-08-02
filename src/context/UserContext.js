@@ -9,6 +9,7 @@ export const UserProvider = ({ children }) => {
     const [loading, setLoading] = useState(true);
     const [open, setOpen] = useState(false);
     const [chatWithWho, setChatWithWho] = useState([]);
+    const [openNotify, setOpenNotify] = useState(false);
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -22,7 +23,7 @@ export const UserProvider = ({ children }) => {
     }, []);
 
     return (
-        <UserContext.Provider value={{ user, setUser, loading, open, setOpen, chatWithWho, setChatWithWho }}>
+        <UserContext.Provider value={{ user, setUser, loading, open, setOpen, chatWithWho, setChatWithWho, setOpenNotify, openNotify }}>
             {children}
         </UserContext.Provider>
     );

@@ -1,6 +1,5 @@
-import { doc, setDoc, updateDoc, getDoc } from "firebase/firestore";
+import { doc, setDoc, updateDoc, getDoc, arrayUnion } from "firebase/firestore";
 import React, { useContext, useState } from 'react';
-import { ChatContext } from '../context/ChatContext';
 import { UserContext } from '../context/UserContext';
 import { db } from "../config/firebase-config";
 
@@ -18,6 +17,7 @@ const Input = () => {
         if (message.trim()) {
             try {
                 const receivedMessage = {
+                    id: new Date().getTime(), // Unique ID for each message
                     name: user?.displayName || 'Anonymous',
                     img: user?.photoURL,
                     time: new Date().toLocaleTimeString(),
@@ -31,7 +31,7 @@ const Input = () => {
 
                 if (chatDoc.exists()) {
                     await updateDoc(chatRef, { 
-                        messages: [...chatDoc.data().messages, receivedMessage]
+                        messages: arrayUnion(receivedMessage) // Use arrayUnion to avoid duplicates
                     });
                 } else {
                     await setDoc(chatRef, { 
@@ -39,6 +39,7 @@ const Input = () => {
                     });
                 }
                 setMessage('');
+
             } catch (error) {
                 console.error("Error sending message: ", error);
             }

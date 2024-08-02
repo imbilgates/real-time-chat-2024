@@ -28,6 +28,8 @@ export default function ListBox({ filterUser, search, setSearch }) {
 
   const handleChatWithWho = (user) => {
     setChatWithWho(user);
+    console.log(user);
+    
     setSearch('');
   }
 
