@@ -8,6 +8,8 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import { getAuth, updateProfile } from 'firebase/auth';
 import { UserContext } from '../../context/UserContext';
+import { db } from '../../config/firebase-config';
+import { doc, setDoc } from 'firebase/firestore';
 
 export default function FormDialog() {
     const { open, setOpen, setUser } = useContext(UserContext);
