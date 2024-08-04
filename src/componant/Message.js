@@ -9,7 +9,7 @@ import { CircularProgress } from '@mui/material';
 
 const Message = () => {
     const [openMessageIndex, setOpenMessageIndex] = useState(null);
-    const [loading, setLoading] = useState(true); // Loading state
+    const [loading, setLoading] = useState(true);
     const { messages, setMessages } = useContext(ChatContext);
     const { user, chatWithWho } = useContext(UserContext);
 
@@ -20,7 +20,7 @@ const Message = () => {
 
     useEffect(() => {
         if (user && chatWithWho) {
-            setLoading(true); // Set loading to true before fetching messages
+            setLoading(true);
             const chatRef = doc(db, "chats", getUniqueChatId(user, chatWithWho));
             const unsubscribe = onSnapshot(chatRef, (snapshot) => {
                 if (snapshot.exists()) {
@@ -29,10 +29,10 @@ const Message = () => {
                 } else {
                     setMessages([]);
                 }
-                setLoading(false); // Set loading to false after messages are fetched
+                setLoading(false);
             });
 
-            return () => unsubscribe(); // Cleanup the listener on unmount
+            return () => unsubscribe();
         }
     }, [user, chatWithWho, setMessages]);
 
@@ -53,7 +53,11 @@ const Message = () => {
         setOpenMessageIndex(prevIndex => prevIndex === index ? null : index);
     }
 
-    if (loading) return <CircularProgress/>;
+    if (loading) return (
+        <div className='loading-container'>
+            <CircularProgress />
+        </div>
+    );
 
     return (
         <ScrollToBottom className='message-container'>

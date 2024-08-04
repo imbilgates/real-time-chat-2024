@@ -5,6 +5,14 @@
   justify-content: center;
   place-items: center;
 }
+/* loading */
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh; /* Adjust based on your needs */
+  width: 100%;
+}
 
 /* sign-in center */
 .Auth{

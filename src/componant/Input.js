@@ -29,7 +29,7 @@ const Input = () => {
                 const chatId = getUniqueChatId(user, chatWithWho);
                 const chatRef = doc(db, 'chats', chatId);
                 const chatDoc = await getDoc(chatRef);
-
+                
                 if (chatDoc.exists()) {
                     await updateDoc(chatRef, {
                         messages: arrayUnion(receivedMessage) // Use arrayUnion to avoid duplicates
@@ -39,7 +39,8 @@ const Input = () => {
                         messages: [receivedMessage]
                     });
                 }
-
+                
+                setMessage('');
                 // Update the userPage collection with the latest message
                 const userPageRef = doc(db, 'userPage', chatWithWho?.uid);
                 const userPageDoc = await getDoc(userPageRef);
@@ -63,7 +64,6 @@ const Input = () => {
                     await setDoc(userPageRef, { chats: [newChatData] });
                 }
 
-                setMessage('');
 
             } catch (error) {
                 console.error('Error sending message: ', error);

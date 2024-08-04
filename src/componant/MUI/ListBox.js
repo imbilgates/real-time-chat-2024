@@ -17,12 +17,6 @@ export default function ListBox({ filterUser, search, setSearch }) {
   const handleChatWithWho = async (clickedUser) => {
     setChatWithWho(clickedUser);
     setSearch('');
-    // For notify indicates
-    const chatRef = doc(db, "notify", clickedUser?.uid);
-    await setDoc(chatRef, {
-      id: user?.uid,
-      text: `"Connecting to You"`
-    }, { merge: true });
   };
 
   const handleAddFriend = async (event, clickedUser) => {
