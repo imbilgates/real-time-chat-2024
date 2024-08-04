@@ -31,7 +31,7 @@ const Message = () => {
 
             return () => unsubscribe(); // Cleanup the listener on unmount
         }
-    }, [user, chatWithWho]);
+    }, [user, chatWithWho, setMessages]);
 
     const deleteChat = async (msg) => {
         try {
