@@ -9,7 +9,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import { getAuth, updateProfile } from 'firebase/auth';
 import { UserContext } from '../../context/UserContext';
 import { db } from '../../config/firebase-config';
-import { collection, setDoc } from 'firebase/firestore';
+import { doc, setDoc } from 'firebase/firestore';
 
 export default function FormDialog() {
     const { open, setOpen, setUser } = useContext(UserContext);
@@ -36,7 +36,7 @@ export default function FormDialog() {
                 setUser({ ...currentUser, displayName: newDisplayName || currentUser.displayName, photoURL: newPhotoURL || currentUser.photoURL });
                 setOpen(false); // Close dialog after successful update
 
-                const userRef = collection(db, "users-log", currentUser.uid);
+                const userRef = doc(db, "users-log", currentUser.uid);
                 await setDoc(userRef, {
                     displayName: newDisplayName || currentUser.displayName,
                     email: currentUser.email,

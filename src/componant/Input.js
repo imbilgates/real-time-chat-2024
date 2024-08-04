@@ -71,6 +71,8 @@ const Input = () => {
         }
     };
 
+    if (chatWithWho.length === 0 ) return false;
+
     return (
         <div>
             <form className="form">
