@@ -5,10 +5,11 @@ import { UserContext } from '../context/UserContext';
 import { doc, onSnapshot, updateDoc, arrayRemove } from 'firebase/firestore';
 import { db } from '../config/firebase-config';
 import UserPage from '../pages/UserPage';
+import { CircularProgress } from '@mui/material';
 
 const Message = () => {
-    
     const [openMessageIndex, setOpenMessageIndex] = useState(null);
+    const [loading, setLoading] = useState(true); // Loading state
     const { messages, setMessages } = useContext(ChatContext);
     const { user, chatWithWho } = useContext(UserContext);
 
@@ -19,6 +20,7 @@ const Message = () => {
 
     useEffect(() => {
         if (user && chatWithWho) {
+            setLoading(true); // Set loading to true before fetching messages
             const chatRef = doc(db, "chats", getUniqueChatId(user, chatWithWho));
             const unsubscribe = onSnapshot(chatRef, (snapshot) => {
                 if (snapshot.exists()) {
@@ -27,6 +29,7 @@ const Message = () => {
                 } else {
                     setMessages([]);
                 }
+                setLoading(false); // Set loading to false after messages are fetched
             });
 
             return () => unsubscribe(); // Cleanup the listener on unmount
@@ -50,6 +53,7 @@ const Message = () => {
         setOpenMessageIndex(prevIndex => prevIndex === index ? null : index);
     }
 
+    if (loading) return <CircularProgress/>;
 
     return (
         <ScrollToBottom className='message-container'>

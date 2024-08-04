@@ -13,12 +13,12 @@ const InfoBar = () => {
 
   return (
     <div className='infoBar' style={{ position: 'relative' }}>
-      <div className='profile' onClick={openDialog}>
+      <div >
         {chatWithWho.length === 0 ? (
-          <>
-            <img src={user?.photoURL} alt="" style={photoURL} />
+          <div className='profile' onClick={openDialog} >
+            <img src={user?.photoURL} alt="" style={photoURL}/>
             <b>{user?.displayName}</b>
-          </>
+          </div>
         ) : (
           <GroupAvatars chatWithWho={chatWithWho} />
         )

@@ -256,6 +256,7 @@
   color: #333;
 }
 .infoBar .profile{
+  cursor: pointer;
   display: flex;
   flex-direction: row;
   align-items: center;

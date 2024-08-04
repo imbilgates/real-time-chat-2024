@@ -11,9 +11,10 @@ const SmallAvatar = styled(Avatar)(({ theme }) => ({
 }));
 
 export default function GroupAvatars({ chatWithWho }) {
-    const { user } = React.useContext(UserContext);
+    const { user, setChatWithWho } = React.useContext(UserContext);
     return (
-        <>
+        <div onClick={() => setChatWithWho([])} style={{cursor: "pointer"}}>
+            <b>🔙</b>
             <Badge
                 overlap="circular"
                 anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
@@ -24,6 +25,6 @@ export default function GroupAvatars({ chatWithWho }) {
                 <Avatar alt={user?.displayName} src={user?.photoURL} />
             </Badge>&nbsp;
             <bn>{user?.displayName + "&" + chatWithWho?.displayName}</bn>
-        </>
+        </div>
     );
 }
