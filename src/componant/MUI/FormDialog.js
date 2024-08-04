@@ -9,11 +9,10 @@ import DialogTitle from '@mui/material/DialogTitle';
 import { getAuth, updateProfile } from 'firebase/auth';
 import { UserContext } from '../../context/UserContext';
 import { db } from '../../config/firebase-config';
-import { doc, setDoc } from 'firebase/firestore';
+import { collection, setDoc } from 'firebase/firestore';
 
 export default function FormDialog() {
     const { open, setOpen, setUser } = useContext(UserContext);
-
     const [newDisplayName, setNewDisplayName] = useState('');
     const [newPhotoURL, setNewPhotoURL] = useState('');
     const [message, setMessage] = useState('');
@@ -25,22 +24,19 @@ export default function FormDialog() {
     const handleUpdate = async () => {
         const auth = getAuth();
         const currentUser = auth.currentUser;
-    
+
         if (currentUser) {
-            const newDisplayName = ''; // Replace with the new display name
-            const newPhotoURL = ''; // Replace with the new photo URL
-    
             try {
                 await updateProfile(currentUser, {
                     displayName: newDisplayName || currentUser.displayName,
                     photoURL: newPhotoURL || currentUser.photoURL
                 });
-    
+
                 setMessage('Profile updated successfully');
                 setUser({ ...currentUser, displayName: newDisplayName || currentUser.displayName, photoURL: newPhotoURL || currentUser.photoURL });
                 setOpen(false); // Close dialog after successful update
-    
-                const userRef = doc(db, "users-log", currentUser.uid);
+
+                const userRef = collection(db, "users-log", currentUser.uid);
                 await setDoc(userRef, {
                     displayName: newDisplayName || currentUser.displayName,
                     email: currentUser.email,
@@ -57,43 +53,41 @@ export default function FormDialog() {
     };
 
     return (
-        <React.Fragment>
-            <Dialog open={open} onClose={handleClose}>
-                <DialogTitle>Please set your profile</DialogTitle>
-                <DialogContent>
-                    <DialogContentText>{message && <p>{message}</p>}</DialogContentText>
-                    <TextField
-                        value={newPhotoURL}
-                        onChange={(e) => setNewPhotoURL(e.target.value)}
-                        placeholder="Enter new photo URL"
-                        margin="dense"
-                        id="photoURL"
-                        name="photoURL"
-                        label="Photo URL"
-                        type="text"
-                        fullWidth
-                        variant="standard"
-                    />
-                    <TextField
-                        value={newDisplayName}
-                        onChange={(e) => setNewDisplayName(e.target.value)}
-                        placeholder="Enter new display name"
-                        autoFocus
-                        required
-                        margin="dense"
-                        id="name"
-                        name="name"
-                        label="Name"
-                        type="text"
-                        fullWidth
-                        variant="standard"
-                    />
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={handleClose}>Cancel</Button>
-                    <Button type="submit" onClick={handleUpdate}>Done</Button>
-                </DialogActions>
-            </Dialog>
-        </React.Fragment>
+        <Dialog open={open} onClose={handleClose}>
+            <DialogTitle>Please set your profile</DialogTitle>
+            <DialogContent>
+                <DialogContentText>{message && <p>{message}</p>}</DialogContentText>
+                <TextField
+                    value={newPhotoURL}
+                    onChange={(e) => setNewPhotoURL(e.target.value)}
+                    placeholder="Enter new photo URL"
+                    margin="dense"
+                    id="photoURL"
+                    name="photoURL"
+                    label="Photo URL"
+                    type="text"
+                    fullWidth
+                    variant="standard"
+                />
+                <TextField
+                    value={newDisplayName}
+                    onChange={(e) => setNewDisplayName(e.target.value)}
+                    placeholder="Enter new display name"
+                    autoFocus
+                    required
+                    margin="dense"
+                    id="name"
+                    name="name"
+                    label="Name"
+                    type="text"
+                    fullWidth
+                    variant="standard"
+                />
+            </DialogContent>
+            <DialogActions>
+                <Button onClick={handleClose}>Cancel</Button>
+                <Button onClick={handleUpdate}>Done</Button>
+            </DialogActions>
+        </Dialog>
     );
 }

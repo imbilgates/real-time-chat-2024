@@ -11,7 +11,7 @@ const Chat = () => {
     
     useEffect(()=>{
         if (!user?.displayName) setOpen(true);
-    },[user.displayName])
+    },[user.displayName, setOpen])
 
     return (
         <div className="chat-container">

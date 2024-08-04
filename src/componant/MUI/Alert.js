@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import Box from '@mui/material/Box';
 import Alert from '@mui/material/Alert';
 import Collapse from '@mui/material/Collapse';
-import { doc, deleteDoc, onSnapshot } from 'firebase/firestore';
+import { deleteDoc, onSnapshot, collection, doc } from 'firebase/firestore';
 import { db } from '../../config/firebase-config';
 import useUsersGetLog from '../../hooks/useUsersGetLog';
 import { Button } from '@mui/material';
