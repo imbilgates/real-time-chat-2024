@@ -1,8 +1,8 @@
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import React, { useContext, useState } from 'react';
 import ReactLoading from 'react-loading';
-import { auth, db, signInWithGoogle } from '../config/firebase-config';
-import { AuthContext } from '../context/AuthContext';
+import { auth, db, signInWithGoogle } from '../../config/firebase-config';
+import { AuthContext } from '../../context/AuthContext';
 import { doc, setDoc } from 'firebase/firestore';
 
 const Signup = () => {

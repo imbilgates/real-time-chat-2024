@@ -2,7 +2,7 @@ import * as React from 'react';
 import { styled } from '@mui/material/styles';
 import Badge from '@mui/material/Badge';
 import Avatar from '@mui/material/Avatar';
-import { UserContext } from '../context/UserContext';
+import { UserContext } from '../../context/UserContext';
 
 const SmallAvatar = styled(Avatar)(({ theme }) => ({
     width: 22,

@@ -1,6 +1,6 @@
 import { signOut } from 'firebase/auth';
 import React, { useState } from 'react';
-import { auth } from '../config/firebase-config';
+import { auth } from '../../config/firebase-config'
 import ReactLoading from 'react-loading';
 
 const Logout = () => {

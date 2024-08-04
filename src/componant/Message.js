@@ -4,10 +4,11 @@ import { ChatContext } from '../context/ChatContext';
 import { UserContext } from '../context/UserContext';
 import { doc, onSnapshot, updateDoc, arrayRemove } from 'firebase/firestore';
 import { db } from '../config/firebase-config';
+import UserPage from '../pages/UserPage';
 
 const Message = () => {
+    
     const [openMessageIndex, setOpenMessageIndex] = useState(null);
-
     const { messages, setMessages } = useContext(ChatContext);
     const { user, chatWithWho } = useContext(UserContext);
 
@@ -49,8 +50,10 @@ const Message = () => {
         setOpenMessageIndex(prevIndex => prevIndex === index ? null : index);
     }
 
+
     return (
         <ScrollToBottom className='message-container'>
+            {chatWithWho.length === 0 && <UserPage />}
             {messages?.map((msg, index) => (
                 <div
                     key={index}

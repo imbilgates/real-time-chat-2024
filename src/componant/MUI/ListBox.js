@@ -6,10 +6,13 @@ import ListItemText from '@mui/material/ListItemText';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
 import Checkbox from '@mui/material/Checkbox';
 import Avatar from '@mui/material/Avatar';
-import { UserContext } from '../context/UserContext';
+import { UserContext } from '../../context/UserContext';
+import { doc, setDoc } from 'firebase/firestore';
+import { db } from '../../config/firebase-config';
 
 export default function ListBox({ filterUser, search, setSearch }) {
   const [checked, setChecked] = React.useState([]);
+  const { user, setChatWithWho } = React.useContext(UserContext);
 
   const handleToggle = (value) => () => {
     const currentIndex = checked.indexOf(value);
@@ -24,14 +27,18 @@ export default function ListBox({ filterUser, search, setSearch }) {
     setChecked(newChecked);
   };
 
-  const { setChatWithWho } = React.useContext(UserContext);
-
-  const handleChatWithWho = (user) => {
-    setChatWithWho(user);
-    console.log(user);
+  const handleChatWithWho = async (clickedUser) => {
+    setChatWithWho(clickedUser);
     
     setSearch('');
-  }
+
+    // For notify indicates
+    const chatRef = doc(db, "notify", clickedUser?.uid);
+    await setDoc(chatRef, {
+      id: user?.uid,
+      text: `"Connecting to You"`
+    }, { merge: true });
+  };
 
   return (
     <List dense sx={{ width: '100%', maxWidth: 360, bgcolor: 'transparent', position: "absolute", marginTop: "52px", zIndex: '2' }}>

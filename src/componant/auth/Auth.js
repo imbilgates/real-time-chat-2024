@@ -1,7 +1,8 @@
-import React, { useContext, useState } from 'react'
-import Signup from './Signup'
-import Login from './Login'
-import { AuthContext } from '../context/AuthContext';
+import React, { useContext } from 'react'
+import { AuthContext } from '../../context/AuthContext';
+import Login from './Login';
+import Signup from './Signup';
+
 
 const Auth = () => {
 

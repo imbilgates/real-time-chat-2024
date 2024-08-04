@@ -3,7 +3,8 @@ import Message from './Message'
 import Input from './Input'
 import InfoBar from './InfoBar'
 import { UserContext } from '../context/UserContext'
-import FormDialog from '../MUI/FormDialog'
+import FormDialog from '../componant/MUI/FormDialog'
+import  TransitionAlerts from '../componant/MUI/Alert'
 
 const Chat = () => {
     const { user, setOpen } = useContext(UserContext);
@@ -16,6 +17,7 @@ const Chat = () => {
         <div className="chat-container">
             <FormDialog />
             <InfoBar />
+            <TransitionAlerts user={user}/>
             <Message />
             <Input />
         </div>

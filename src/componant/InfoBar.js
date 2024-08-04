@@ -1,8 +1,8 @@
 import React, { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
-import Logout from '../auth/Logout';
+import Logout from '../componant/auth/Logout';
 import Users from '../pages/Users';
-import GroupAvatars from '../MUI/GroupAvatars';
+import GroupAvatars from '../componant/MUI/GroupAvatars';
 
 const InfoBar = () => {
   const { user, setOpen, chatWithWho } = useContext(UserContext);

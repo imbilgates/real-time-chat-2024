@@ -4,7 +4,7 @@ import Home from './pages/Home';
 import { useContext } from 'react';
 import { UserContext } from './context/UserContext'
 import ProtectRoute from './ProtectRoute/ProtectRoute'
-import Auth from './auth/Auth'
+import Auth from './componant/auth/Auth'
 
 function App() {
   const { user, loading } = useContext(UserContext);

@@ -22,8 +22,20 @@ export const UserProvider = ({ children }) => {
         };
     }, []);
 
+    const obj = {
+        user,
+        setUser,
+        loading,
+        open,
+        setOpen,
+        chatWithWho,
+        setChatWithWho,
+        setOpenNotify,
+        openNotify
+    }
+
     return (
-        <UserContext.Provider value={{ user, setUser, loading, open, setOpen, chatWithWho, setChatWithWho, setOpenNotify, openNotify }}>
+        <UserContext.Provider value={obj}>
             {children}
         </UserContext.Provider>
     );
