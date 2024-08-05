@@ -8,14 +8,18 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import { getAuth, updateProfile } from 'firebase/auth';
 import { UserContext } from '../../context/UserContext';
-import { db } from '../../config/firebase-config';
+import { db, storage } from '../../config/firebase-config'; // Make sure to import storage from firebase-config
 import { doc, setDoc } from 'firebase/firestore';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'; // Import necessary Firebase Storage functions
+import { InputAdornment, IconButton } from '@mui/material';
+import PhotoCamera from '@mui/icons-material/PhotoCamera';
 
 export default function FormDialog() {
     const { open, setOpen, setUser } = useContext(UserContext);
     const [newDisplayName, setNewDisplayName] = useState('');
     const [newPhotoURL, setNewPhotoURL] = useState('');
     const [message, setMessage] = useState('');
+    const [file, setFile] = useState(null); // State to hold the file
 
     const handleClose = () => {
         setOpen(false);
@@ -27,20 +31,29 @@ export default function FormDialog() {
 
         if (currentUser) {
             try {
+                let photoURL = newPhotoURL;
+
+                if (file) {
+                    const storageRef = ref(storage, `profile_images/${currentUser.uid}`);
+                    await uploadBytes(storageRef, file);
+                    photoURL = await getDownloadURL(storageRef);
+                    setNewPhotoURL(photoURL);
+                }
+
                 await updateProfile(currentUser, {
                     displayName: newDisplayName || currentUser.displayName,
-                    photoURL: newPhotoURL || currentUser.photoURL
+                    photoURL: photoURL || currentUser.photoURL
                 });
 
                 setMessage('Profile updated successfully');
-                setUser({ ...currentUser, displayName: newDisplayName || currentUser.displayName, photoURL: newPhotoURL || currentUser.photoURL });
+                setUser({ ...currentUser, displayName: newDisplayName || currentUser.displayName, photoURL: photoURL || currentUser.photoURL });
                 setOpen(false); // Close dialog after successful update
 
                 const userRef = doc(db, "users-log", currentUser.uid);
                 await setDoc(userRef, {
                     displayName: newDisplayName || currentUser.displayName,
                     email: currentUser.email,
-                    photoURL: newPhotoURL || currentUser.photoURL,
+                    photoURL: photoURL || currentUser.photoURL,
                     uid: currentUser.uid,
                     lastLogin: new Date().toISOString()
                 }, { merge: true });
@@ -52,10 +65,23 @@ export default function FormDialog() {
         }
     };
 
+    const handlePhotoUpload = (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            setFile(file); // Save the file to the state
+            setNewPhotoURL(URL.createObjectURL(file)); // Show preview of the selected image
+        }
+    };
+
     return (
         <Dialog open={open} onClose={handleClose}>
             <DialogTitle>Please set your profile</DialogTitle>
             <DialogContent>
+                {newPhotoURL && (
+                    <div style={{ textAlign: 'center', marginBottom: '10px' }}>
+                        <img src={newPhotoURL} alt="Selected preview" style={{ width: '100px', height: '100px', borderRadius: '50%' }} />
+                    </div>
+                )}
                 <DialogContentText>{message && <p>{message}</p>}</DialogContentText>
                 <TextField
                     value={newPhotoURL}
@@ -68,6 +94,24 @@ export default function FormDialog() {
                     type="text"
                     fullWidth
                     variant="standard"
+                    InputProps={{
+                        endAdornment: (
+                            <InputAdornment position="end">
+                                <IconButton
+                                    aria-label="upload picture"
+                                    component="label"
+                                >
+                                    <input
+                                        hidden
+                                        accept="image/*"
+                                        type="file"
+                                        onChange={handlePhotoUpload}
+                                    />
+                                    <PhotoCamera />
+                                </IconButton>
+                            </InputAdornment>
+                        ),
+                    }}
                 />
                 <TextField
                     value={newDisplayName}

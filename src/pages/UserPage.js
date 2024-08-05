@@ -43,7 +43,10 @@ const UserPage = () => {
     }
 
     return (
-        <UserPageList userPageData={userPageData} handleChatWithWho={handleChatWithWho} />
+        <UserPageList
+            userPageData={userPageData}
+            handleChatWithWho={handleChatWithWho}
+        />
     );
 }
 
