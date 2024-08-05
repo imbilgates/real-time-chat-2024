@@ -8,7 +8,7 @@ import Typography from '@mui/material/Typography';
 import { styled } from '@mui/material/styles';
 import useUsersGetLog from '../../hooks/useUsersGetLog';
 import { Badge, Stack } from '@mui/material';
-import { doc, getDoc, onSnapshot } from 'firebase/firestore';
+import { doc, onSnapshot } from 'firebase/firestore';
 import { db } from '../../config/firebase-config';
 const StyledList = styled(List)(({ theme }) => ({
   width: '100%',
