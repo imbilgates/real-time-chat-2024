@@ -1,4 +1,4 @@
-import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import React, { useContext, useState } from 'react';
 import ReactLoading from 'react-loading';
 import { auth, db, signInWithGoogle } from '../../config/firebase-config';
@@ -7,6 +7,7 @@ import { doc, setDoc } from 'firebase/firestore';
 
 const Signup = () => {
   const [loading, setLoading] = useState(false);
+  const [username, setUsername] = useState('');
 
   const { registerEmail, registerPassword, setRegisterEmail, setRegisterPassword, setIsClicked } = useContext(AuthContext);
 
@@ -16,12 +17,21 @@ const Signup = () => {
       const userCredential = await createUserWithEmailAndPassword(auth, registerEmail, registerPassword);
       const user = userCredential.user;
 
+      // Define default photoURL if not provided
+      const profilePhotoURL = pfp;
+
+      // Update Auth profile with displayName and photoURL
+      await updateProfile(user, {
+        displayName: username || user.displayName || '',
+        photoURL: profilePhotoURL,
+      });
+
       // Update Firestore document
       const userRef = doc(db, "users-log", user.uid);
       await setDoc(userRef, {
-        displayName: user.displayName || "",
+        displayName: username || user.displayName || "",
         email: user.email,
-        photoURL: user.photoURL || "",
+        photoURL: profilePhotoURL,
         uid: user.uid,
         lastLogin: new Date().toISOString()
       }, { merge: true });
@@ -31,17 +41,24 @@ const Signup = () => {
     } catch (err) {
       setLoading(false);
       console.error(err.message);
-      if (err.message.toString() === "Firebase: Error (auth/email-already-in-use).") {
+      if (err.message.includes("auth/email-already-in-use")) {
         alert("Email already in use");
-      } else if (err.message.toString() === "Firebase: Error (auth/invalid-email).") {
+      } else if (err.message.includes("auth/invalid-email")) {
         alert("Enter an email correctly");
       }
     }
   };
 
+
   return (
     <div className="sign-Up">
       <h3 className="sign-Up-heading">Register User</h3>
+      <input
+        className="sign-Up-input"
+        placeholder="Username.."
+        value={username}
+        onChange={(e) => setUsername(e.target.value)}
+      />
       <input
         className="sign-Up-input"
         placeholder="Email.."
@@ -71,3 +88,5 @@ const Signup = () => {
 };
 
 export default Signup;
+
+const pfp = "https://firebasestorage.googleapis.com/v0/b/chatwithme-f4d3b.appspot.com/o/profile_images%2Fdefault-img.jpg?alt=media&token=1ba78e09-fe52-41d2-b403-e1c46a0677cb";

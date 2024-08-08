@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Dialog from '@mui/material/Dialog';
@@ -20,6 +20,18 @@ export default function FormDialog() {
     const [newPhotoURL, setNewPhotoURL] = useState('');
     const [message, setMessage] = useState('');
     const [file, setFile] = useState(null); // State to hold the file
+
+    useEffect(() => {
+        if (open) {
+            const auth = getAuth();
+            const currentUser = auth.currentUser;
+
+            if (currentUser) {
+                setNewDisplayName(currentUser.displayName || '');
+                setNewPhotoURL(currentUser.photoURL || '');
+            }
+        }
+    }, [open]);
 
     const handleClose = () => {
         setOpen(false);
