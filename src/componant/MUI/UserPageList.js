@@ -10,47 +10,7 @@ import useUsersGetLog from '../../hooks/useUsersGetLog';
 import { Badge, Stack } from '@mui/material';
 import { doc, onSnapshot } from 'firebase/firestore';
 import { db } from '../../config/firebase-config';
-const StyledList = styled(List)(({ theme }) => ({
-  width: '100%',
-  maxWidth: 560,
-  backgroundColor: '#F9F9F9',
-  cursor: 'pointer',
-}));
 
-const StyledListItem = styled(ListItem)(({ theme }) => ({
-  '&:hover': {
-    backgroundColor: theme.palette.action.hover,
-  },
-}));
-
-const StyledBadge = styled(Badge)(({ theme }) => ({
-  '& .MuiBadge-badge': {
-    backgroundColor: '#44b700',
-    color: '#44b700',
-    boxShadow: `0 0 0 2px ${theme.palette.background.paper}`,
-    '&::after': {
-      position: 'absolute',
-      top: 0,
-      left: 0,
-      width: '100%',
-      height: '100%',
-      borderRadius: '50%',
-      animation: 'ripple 1.2s infinite ease-in-out',
-      border: '1px solid currentColor',
-      content: '""',
-    },
-  },
-  '@keyframes ripple': {
-    '0%': {
-      transform: 'scale(.8)',
-      opacity: 1,
-    },
-    '100%': {
-      transform: 'scale(2.4)',
-      opacity: 0,
-    },
-  },
-}));
 
 export default function UserPageList({ userPageData, handleChatWithWho }) {
   const { users } = useUsersGetLog();
@@ -90,7 +50,7 @@ export default function UserPageList({ userPageData, handleChatWithWho }) {
 
   return (
     <StyledList>
-      {userPageData?.map((user, index) => {
+      {userPageData?.slice().reverse().map((user, index) => {
         const isOnline = onlineStatuses[user.id];
 
         return (
@@ -133,3 +93,46 @@ export default function UserPageList({ userPageData, handleChatWithWho }) {
     </StyledList>
   );
 }
+
+
+const StyledList = styled(List)(({ theme }) => ({
+  width: '100%',
+  maxWidth: 560,
+  backgroundColor: '#F9F9F9',
+  cursor: 'pointer',
+}));
+
+const StyledListItem = styled(ListItem)(({ theme }) => ({
+  '&:hover': {
+    backgroundColor: theme.palette.action.hover,
+  },
+}));
+
+const StyledBadge = styled(Badge)(({ theme }) => ({
+  '& .MuiBadge-badge': {
+    backgroundColor: '#44b700',
+    color: '#44b700',
+    boxShadow: `0 0 0 2px ${theme.palette.background.paper}`,
+    '&::after': {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      width: '100%',
+      height: '100%',
+      borderRadius: '50%',
+      animation: 'ripple 1.2s infinite ease-in-out',
+      border: '1px solid currentColor',
+      content: '""',
+    },
+  },
+  '@keyframes ripple': {
+    '0%': {
+      transform: 'scale(.8)',
+      opacity: 1,
+    },
+    '100%': {
+      transform: 'scale(2.4)',
+      opacity: 0,
+    },
+  },
+}));

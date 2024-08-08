@@ -60,7 +60,7 @@ const Message = () => {
     );
 
     return (
-        <ScrollToBottom className='message-container'>
+        <ScrollToBottom className='message-container' >
             {chatWithWho.length === 0 && <UserPage />}
             {messages?.map((msg, index) => (
                 <div
