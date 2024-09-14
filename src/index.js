@@ -10,15 +10,13 @@ import { ChatProvider } from './context/ChatContext';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <React.StrictMode>
-    <AuthProvider>
-      <UserProvider>
-        <ChatProvider>
-        <Router>
-          <App />
-        </Router>
-        </ChatProvider>
-      </UserProvider>
-    </AuthProvider>
-  </React.StrictMode>
+      <AuthProvider>
+        <UserProvider>
+          <ChatProvider>
+            <Router>
+              <App />
+            </Router>
+          </ChatProvider>
+        </UserProvider>
+      </AuthProvider>
 );

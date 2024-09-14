@@ -36,19 +36,18 @@ const Signup = () => {
         lastLogin: new Date().toISOString()
       }, { merge: true });
 
-      setLoading(false);
       console.log(user);
     } catch (err) {
-      setLoading(false);
       console.error(err.message);
       if (err.message.includes("auth/email-already-in-use")) {
         alert("Email already in use");
       } else if (err.message.includes("auth/invalid-email")) {
         alert("Enter an email correctly");
       }
+    } finally {
+      setLoading(false);
     }
   };
-
 
   return (
     <div className="sign-Up">

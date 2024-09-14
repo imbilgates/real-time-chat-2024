@@ -23,8 +23,6 @@ export const signInWithGoogle = async () => {
   try {
     const result = await signInWithPopup(auth, provider);
     const user = result.user;
-
-    // Create a reference to the user document
     const userRef = doc(db, "users-log", user.uid);
 
     await setDoc(userRef, {

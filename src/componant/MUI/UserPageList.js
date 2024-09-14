@@ -6,31 +6,15 @@ import ListItemAvatar from '@mui/material/ListItemAvatar';
 import Avatar from '@mui/material/Avatar';
 import Typography from '@mui/material/Typography';
 import { styled } from '@mui/material/styles';
-import useUsersGetLog from '../../hooks/useUsersGetLog';
 import { Badge, Stack } from '@mui/material';
-import { doc, onSnapshot } from 'firebase/firestore';
-import { db } from '../../config/firebase-config';
+import ClearIcon from '@mui/icons-material/Clear';
+import { convertTimestamp } from '../../utils/commonFunctions';
+import useUsersGetLog from '../../hooks/useUsersGetLog';
 
 
-export default function UserPageList({ userPageData, handleChatWithWho }) {
+export default function UserPageList({ userPageData, handleChatWithWho, handleRemoveItem }) {
+  const [hoveredItemId, setHoveredItemId] = React.useState(null);
   const { users } = useUsersGetLog();
-  const [onlineStatuses, setOnlineStatuses] = React.useState({});
-
-  React.useEffect(() => {
-    const unsubscribe = userPageData.map((user) => {
-      const userStatusRef = doc(db, 'status', user.id);
-      return onSnapshot(userStatusRef, (statusSnap) => {
-        setOnlineStatuses((prevStatuses) => ({
-          ...prevStatuses,
-          [user.id]: statusSnap.exists() && statusSnap.data().online,
-        }));
-      });
-    });
-
-    return () => {
-      unsubscribe.forEach(unsub => unsub());
-    };
-  }, [userPageData]);
 
   // Function to find a user by ID from the users list
   const findUserById = (id) => {
@@ -48,45 +32,73 @@ export default function UserPageList({ userPageData, handleChatWithWho }) {
     }
   };
 
+
+  const handleMouseEnter = (userId) => {
+    setHoveredItemId(userId);
+  };
+
+  const handleMouseLeave = () => {
+    setHoveredItemId(null);
+  };
+
+  if ( userPageData.length === 0 ) { return <p style={styles.greeting}>Add a Friend to chat with them...</p>; };
+
   return (
     <StyledList>
-      {userPageData?.slice().reverse().map((user, index) => {
-        const isOnline = onlineStatuses[user.id];
-
+      {userPageData?.map((user, index) => {
         return (
-          <StyledListItem key={index} alignItems="flex-start" onClick={() => handleChatWithWhoClick(user.id)}>
+          <StyledListItem
+            key={index}
+            alignItems="flex-start"
+            onClick={() => handleChatWithWhoClick(user.id)}
+            onMouseEnter={() => handleMouseEnter(user.id)}
+            onMouseLeave={handleMouseLeave}
+          >
             <ListItemAvatar>
               <Stack direction="row" spacing={2}>
-                {isOnline ? (
-                  <StyledBadge
-                    overlap="circular"
-                    anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-                    variant="dot"
-                  >
-                    <Avatar alt={user.name} src={user.img} />
-                  </StyledBadge>
-                ) : (
+                <StyledBadge
+                  overlap="circular"
+                  anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                  variant="dot"
+                >
                   <Avatar alt={user.name} src={user.img} />
-                )}
+                </StyledBadge>
               </Stack>
             </ListItemAvatar>
+
             <ListItemText
               primary={user.name}
               secondary={
-                <React.Fragment>
-                  {user.text}
+                <>
                   <Typography
-                    style={{ display: 'flex', flexDirection: 'row-reverse' }}
+                    style={{ display: 'flex', fontSize: '10px'}}
                     sx={{ display: 'inline' }}
                     component="span"
                     variant="body2"
                     color="text.primary"
                   >
-                    - {user.time}
+                    {convertTimestamp(user.time)} {/* Convert the Firestore timestamp */}
                   </Typography>
-                </React.Fragment>
+                  {user.text}
+                </>
               }
             />
+            {hoveredItemId === user.id && (
+              <div
+                onClick={(e) => {
+                  e.stopPropagation(); // Prevent click from triggering the chat action
+                  handleRemoveItem(user.id); // Trigger remove handler
+                }}
+                style={{
+                  display: 'flex',
+                  flexDirection: 'row',
+                  alignSelf: 'center',
+                  cursor: 'pointer',
+                }}
+              >
+                <ClearIcon fontSize='large'/>
+              </div>
+            )}
           </StyledListItem>
         );
       })}
@@ -94,6 +106,16 @@ export default function UserPageList({ userPageData, handleChatWithWho }) {
   );
 }
 
+
+const styles = {
+  greeting: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    color: 'green',
+    marginTop: '150px',
+  }
+}
 
 const StyledList = styled(List)(({ theme }) => ({
   width: '100%',
@@ -113,26 +135,5 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
     backgroundColor: '#44b700',
     color: '#44b700',
     boxShadow: `0 0 0 2px ${theme.palette.background.paper}`,
-    '&::after': {
-      position: 'absolute',
-      top: 0,
-      left: 0,
-      width: '100%',
-      height: '100%',
-      borderRadius: '50%',
-      animation: 'ripple 1.2s infinite ease-in-out',
-      border: '1px solid currentColor',
-      content: '""',
-    },
-  },
-  '@keyframes ripple': {
-    '0%': {
-      transform: 'scale(.8)',
-      opacity: 1,
-    },
-    '100%': {
-      transform: 'scale(2.4)',
-      opacity: 0,
-    },
   },
 }));

@@ -1,7 +1,7 @@
 import React, { useContext, useState } from 'react';
 import useUsersGetLog from '../hooks/useUsersGetLog';
 import { Input } from '@mui/material';
-import ListBox from '../componant/MUI/ListBox';
+import SearchBox from '../componant/MUI/SearchBox';
 import { UserContext } from '../context/UserContext';
 
 const Users = () => {
@@ -30,7 +30,7 @@ const Users = () => {
                 onChange={handleSearch}
                 value={search}
             />
-            <ListBox search={search} filterUser={filterUser} setSearch={setSearch}/>
+            <SearchBox search={search} filterUser={filterUser} setSearch={setSearch}/>
             {/* {search && (
                 filterUser.map(user => (
                     <div key={user.uid}>

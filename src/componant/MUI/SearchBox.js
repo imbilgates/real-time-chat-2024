@@ -8,7 +8,7 @@ import IconButton from '@mui/material/IconButton';
 import Avatar from '@mui/material/Avatar';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import { UserContext } from '../../context/UserContext';
-import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
+import { doc, getDoc, setDoc, Timestamp, updateDoc } from 'firebase/firestore';
 import { db } from '../../config/firebase-config';
 
 export default function ListBox({ filterUser, search, setSearch }) {
@@ -29,8 +29,10 @@ export default function ListBox({ filterUser, search, setSearch }) {
       id: clickedUser?.uid,
       name: clickedUser?.displayName,
       img: clickedUser?.photoURL,
-      text: "no recent messages"
+      text: "no recent messages",
+      time: Timestamp.now(),
     };
+
     if (userPageDoc.exists()) {
       const currentData = userPageDoc.data().chats || [];
       const updatedData = currentData.filter(chat => chat.id !== newChatData.id);

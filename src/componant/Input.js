@@ -1,12 +1,15 @@
-import React, { useContext } from 'react';
-import { doc, setDoc, updateDoc, getDoc, arrayUnion } from 'firebase/firestore';
+import React, { useContext, useRef } from 'react';
+import { doc, setDoc, updateDoc, getDoc, arrayUnion, Timestamp } from 'firebase/firestore';
 import { UserContext } from '../context/UserContext';
 import { ChatContext } from '../context/ChatContext';
 import { db } from '../config/firebase-config';
 
+
 const Input = () => {
     const { user, chatWithWho } = useContext(UserContext);
     const { message, setMessage } = useContext(ChatContext);
+
+    const msgbox = useRef();
 
     const getUniqueChatId = (user, chatWithWho) => {
         const sortedUids = [user.uid, chatWithWho.uid].sort();
@@ -18,10 +21,10 @@ const Input = () => {
         if (message.trim()) {
             try {
                 const receivedMessage = {
-                    id: new Date().getTime(), // Unique ID for each message
+                    id: new Date().getTime(),
                     name: user?.displayName || 'Anonymous',
                     img: user?.photoURL,
-                    time: new Date().toLocaleTimeString(),
+                    time: Timestamp.now(),
                     text: message,
                     sender: user?.uid
                 };
@@ -32,16 +35,14 @@ const Input = () => {
                 
                 if (chatDoc.exists()) {
                     await updateDoc(chatRef, {
-                        messages: arrayUnion(receivedMessage) // Use arrayUnion to avoid duplicates
+                        messages: arrayUnion(receivedMessage) 
                     });
                 } else {
                     await setDoc(chatRef, {
                         messages: [receivedMessage]
                     });
                 }
-                
-                setMessage('');
-                // Update the userPage collection with the latest message
+
                 const userPageRef = doc(db, 'userPage', chatWithWho?.uid);
                 const userPageDoc = await getDoc(userPageRef);
 
@@ -50,7 +51,7 @@ const Input = () => {
                     name: user?.displayName,
                     img: user?.photoURL,
                     text: message,
-                    time: new Date().toLocaleTimeString()
+                    time: Timestamp.now()
                 };
 
                 if (userPageDoc.exists()) {
@@ -64,6 +65,9 @@ const Input = () => {
                     await setDoc(userPageRef, { chats: [newChatData] });
                 }
 
+                setMessage('');
+                msgbox.current.value = '';
+
 
             } catch (error) {
                 console.error('Error sending message: ', error);
@@ -74,13 +78,14 @@ const Input = () => {
     if (chatWithWho.length === 0 ) return false;
 
     return (
-        <div>
+        <div className='input-box'>
             <form className="form">
                 <input
                     className="input"
                     type="text"
                     placeholder="Type here..."
                     value={message}
+                    ref={msgbox}
                     onChange={({ target: { value } }) => setMessage(value)}
                     onKeyPress={event => event.key === 'Enter' ? sendMessage(event) : null}
                 />

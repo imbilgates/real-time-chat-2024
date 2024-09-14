@@ -5,7 +5,7 @@ const Home = () => {
 
   return (
     <div className='Home'>
-      <h1>Chat-With-Me</h1>
+      <h1>Real-Time-Chat</h1>
       <Chat />
     </div>
   )

@@ -5,18 +5,21 @@ import Users from '../pages/Users';
 import GroupAvatars from '../componant/MUI/GroupAvatars';
 
 const InfoBar = () => {
+
+
   const { user, setOpen, chatWithWho } = useContext(UserContext);
 
   const openDialog = () => {
     setOpen(true);
   }
 
+
   return (
     <div className='infoBar' style={{ position: 'relative' }}>
       <div >
         {chatWithWho.length === 0 ? (
           <div className='profile' onClick={openDialog} >
-            <img src={user?.photoURL} alt="" style={photoURL}/>
+            <img src={user?.photoURL} alt="" style={photoURL} />
             <b>{user?.displayName}</b>
           </div>
         ) : (
@@ -25,8 +28,12 @@ const InfoBar = () => {
         }
       </div>
       <div>
-        <Users />
+        {chatWithWho.length === 0 && <Users />}
       </div>
+      {chatWithWho.length !== 0 &&
+        <div style={{ marginTop: '10px' }}>
+          <></>
+        </div>}
       <div className='logout-container'>
         <Logout />
       </div>
