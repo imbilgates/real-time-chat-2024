@@ -1,16 +1,15 @@
-import React, { useContext } from 'react'
-import { AuthContext } from '../../context/AuthContext';
+import React from 'react'
 import Login from './Login';
 import Signup from './Signup';
-
+import { useSelector } from 'react-redux';
 
 const Auth = () => {
 
-  const { isClicked } = useContext(AuthContext);
-  
+  const { clicked } = useSelector((state) => state.auth);
+
   return (
     <div className='Auth'>
-        {isClicked ? <Signup /> : <Login />}
+        {clicked ? <Signup /> : <Login />}
     </div>
   )
 }

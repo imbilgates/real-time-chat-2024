@@ -15,6 +15,7 @@ import useUsersGetLog from '../../hooks/useUsersGetLog';
 export default function UserPageList({ userPageData, handleChatWithWho, handleRemoveItem }) {
   const [hoveredItemId, setHoveredItemId] = React.useState(null);
   const { users } = useUsersGetLog();
+    
 
   // Function to find a user by ID from the users list
   const findUserById = (id) => {

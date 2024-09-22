@@ -1,46 +1,27 @@
-import { signInWithEmailAndPassword } from 'firebase/auth';
-import React, { useContext, useState } from 'react';
-import { auth, db, signInWithGoogle } from '../../config/firebase-config';
+import React, { useState } from 'react';
+import { signInWithGoogle } from '../../config/firebase-config';
 import ReactLoading from 'react-loading';
-import { AuthContext } from '../../context/AuthContext';
-import { doc, setDoc } from 'firebase/firestore';
+import { login } from '../../store/authSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { setIsClicked } from '../../store/authSlice';
+
 
 const Login = () => {
-    const [loading, setLoading] = useState(false);
 
-    const {
-        loginEmail,
-        loginPassword,
-        setLoginEmail,
-        setLoginPassword,
-        setIsClicked
-    } = useContext(AuthContext);
+    const [loginEmail, setLoginEmail] = useState("");
+    const [loginPassword, setLoginPassword] = useState("");
 
-    const login = async () => {
-        setLoading(true);
-        try {
-            const userCredential = await signInWithEmailAndPassword(
-                auth,
-                loginEmail,
-                loginPassword
-            );
-            const user = userCredential.user;
-            const userRef = doc(db, "users-log", user.uid);
-            await setDoc(userRef, {
-                displayName: user.displayName || "",
-                email: user.email,
-                photoURL: user.photoURL || "",
-                uid: user.uid,
-                lastLogin: new Date().toISOString()
-            }, { merge: true });
-            setLoading(false);
-            console.log(user);
-        } catch (err) {
-            setLoading(false);
-            alert(err.message);
-            console.error(err.message);
-        }
+    const dispatch = useDispatch();
+
+    const { loading, error } = useSelector((state) => state.auth);
+
+    const handleLogin = () => {
+        dispatch(login({ email: loginEmail, password: loginPassword }));
     };
+
+    const handleClick = () => {
+        dispatch(setIsClicked());
+    }
 
     return (
         <div className="login">
@@ -58,14 +39,15 @@ const Login = () => {
                 value={loginPassword}
                 onChange={(e) => setLoginPassword(e.target.value)}
             />
-            <button className="login-button" onClick={login}>
+            <button className="login-button" onClick={handleLogin}>
                 {loading ? (
                     <ReactLoading type={'spin'} color={"#ffffff"} height={'20px'} width={'20px'} />
                 ) : (
                     "Login"
                 )}
             </button><br />
-            <button className="link-button" onClick={() => setIsClicked(true)}>To Register</button><br /><br />
+            {error && <p>{error}</p>}
+            <button className="link-button" onClick={handleClick}>To Register</button><br /><br />
             <button className="login-with-google-btn" onClick={signInWithGoogle}>
                 Sign In With Google
             </button>

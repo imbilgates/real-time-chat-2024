@@ -1,76 +1,39 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import ScrollToBottom from 'react-scroll-to-bottom';
 import { ChatContext } from '../context/ChatContext';
 import { UserContext } from '../context/UserContext';
-import { doc, onSnapshot, updateDoc, arrayRemove } from 'firebase/firestore';
-import { db } from '../config/firebase-config';
 import UserPage from '../pages/UserPage';
-import { CircularProgress } from '@mui/material';
 import { convertTimestamp } from '../utils/commonFunctions';
 
 const Message = () => {
-
     const [openMessageIndex, setOpenMessageIndex] = useState(null);
-    const [loading, setLoading] = useState(true);
     const { messages, setMessages } = useContext(ChatContext);
     const { user, chatWithWho } = useContext(UserContext);
 
-    const getUniqueChatId = (user, chatWithWho) => {
-        const sortedUids = [user.uid, chatWithWho.uid].sort();
-        return sortedUids.join('');
-    };
-
     useEffect(() => {
-        console.log("hi");
-        if (user && chatWithWho) {
-            setLoading(true);
-            const chatRef = doc(db, "chats", getUniqueChatId(user, chatWithWho));
-            const unsubscribe = onSnapshot(chatRef, (snapshot) => {
-                if (snapshot.exists()) {
-                    const data = snapshot.data();
-                    setMessages(data.messages || []);
-                } else {
-                    setMessages([]);
-                }
-                setLoading(false);
-            });
-
-            return () => unsubscribe();
-        }
+        if (!user && !chatWithWho) return setMessages([]);
     }, [user, chatWithWho, setMessages]);
 
-    const deleteChat = async (msg) => {
-        try {
-            const chatId = getUniqueChatId(user, chatWithWho);
-            const chatRef = doc(db, "chats", chatId);
-
-            await updateDoc(chatRef, {
-                messages: arrayRemove(msg)
-            });
-        } catch (error) {
-            console.error("Error deleting message: ", error);
-        }
+    const deleteChat = (msgId) => {
+        setMessages((prev) => prev.filter((msg) => msg.id !== msgId));
     };
 
     const toggleDeleteIcon = (index) => {
         setOpenMessageIndex(prevIndex => prevIndex === index ? null : index);
+    };
+
+    // Render the UserPage if no user is selected to chat with
+    if (chatWithWho.length === 0) {
+        return <UserPage />;
     }
 
-    if (loading) return (
-        <div className='loading-container'>
-            <CircularProgress />
-        </div>
-    );
-
-
+    // Render the message container and messages only when there's a chat
     return (
-        <div className={`${chatWithWho.length === 0 ? 'message-container' : "message-container-bg"}`} >
-            {/* <ThemeDialog /> */}
-            <ScrollToBottom checkInterval={100} className={`${chatWithWho.length !== 0 && "message-container-scroll"}`}>
-                {chatWithWho.length === 0 && <UserPage />}
+        <div className="message-container-bg">
+            <ScrollToBottom checkInterval={100} className="message-container-scroll">
                 {messages?.map((msg, index) => (
                     <div
-                        key={index}
+                        key={msg.id}
                         className={`message ${msg.sender === user.uid ? 'sent' : 'received'}`}
                         onClick={() => msg.sender === user.uid && toggleDeleteIcon(index)}
                     >
@@ -79,7 +42,10 @@ const Message = () => {
                                 <img src={msg?.img} alt="" style={photoURL} />
                                 <p className='message-name'>{msg.name}</p>
                                 {msg.sender === user.uid && openMessageIndex === index && (
-                                    <b style={{ flex: 1, cursor: 'pointer' }} onClick={() => deleteChat(msg)}>🗑️</b>
+                                    <b
+                                        style={{ flex: 1, cursor: 'pointer' }}
+                                        onClick={() => deleteChat(msg.id)}
+                                    >🗑️</b>
                                 )}
                             </p>
                             <p className='message-text'>{msg?.text}</p>
@@ -95,4 +61,3 @@ const Message = () => {
 export default Message;
 
 const photoURL = { width: '20px', height: '20px', borderRadius: '50%' };
-

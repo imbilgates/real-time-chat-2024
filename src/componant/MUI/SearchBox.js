@@ -46,7 +46,7 @@ export default function ListBox({ filterUser, search, setSearch }) {
   };
 
   return (
-    <List dense sx={{ width: '100%', maxWidth: 360, bgcolor: 'transparent', position: "absolute", marginTop: "52px", zIndex: '2' }}>
+    <List dense >
       {search && filterUser.map((user) => (
         <ListItem
           key={user.uid}
