@@ -1,35 +1,20 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext } from 'react';
 import UserPageList from '../componant/MUI/UserPageList';
 import { UserContext } from '../context/UserContext';
-import { doc, onSnapshot, updateDoc } from 'firebase/firestore';
+import { doc, updateDoc } from 'firebase/firestore';
 import { db } from '../config/firebase-config';
+import useFetchFriends from '../hooks/useFetchFriends';
+import ScrollToBottom from 'react-scroll-to-bottom';
+import { ChatContext } from '../context/ChatContext';
 
 const UserPage = () => {
-    const { user, setChatWithWho } = useContext(UserContext); 
-    const [userPageData, setUserPageData] = useState([]);
-    const [loading, setLoading] = useState(true);
+    
+    const { chatPhase } = useContext(ChatContext);
 
-    useEffect(() => {
-        if (user?.uid) {
-            const chatRef = doc(db, 'userPage', user.uid);
+    const { user, setChatWithWho } = useContext(UserContext);
 
-            const unsubscribe = onSnapshot(chatRef, (doc) => {
-                if (doc.exists()) {
-                    const data = doc.data();
-                    setUserPageData(Array.isArray(data.chats) ? data.chats : []);
-                } else {
-                    console.log('No such document!');
-                    setUserPageData([]);
-                }
-                setLoading(false);
-            }, (error) => {
-                console.error('Error fetching user page data:', error);
-                setLoading(false);
-            });
+    const { userPageData, loading, error } = useFetchFriends();
 
-            return () => unsubscribe();
-        }
-    }, [user]);
 
     const handleChatWithWho = (clickedUser) => {
         setChatWithWho(clickedUser);
@@ -43,7 +28,6 @@ const UserPage = () => {
 
             try {
                 await updateDoc(chatRef, { chats: updatedChats });
-                setUserPageData(updatedChats); // Update local state to reflect change
             } catch (error) {
                 console.error('Error removing chat:', error);
             }
@@ -54,12 +38,15 @@ const UserPage = () => {
         return <div>Loading...</div>;
     }
 
+    if (!chatPhase === 'user') return;
+
     return (
-        <UserPageList
-            userPageData={userPageData.slice().reverse()}
-            handleChatWithWho={handleChatWithWho}
-            handleRemoveItem={handleRemoveItem} // Pass down the remove handler
-        />
+        <ScrollToBottom checkInterval={100} className="message-container-scroll">
+            <UserPageList
+                handleChatWithWho={handleChatWithWho}
+                handleRemoveItem={handleRemoveItem} // Pass down the remove handler
+            />
+        </ScrollToBottom>
     );
 }
 

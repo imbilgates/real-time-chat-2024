@@ -10,11 +10,16 @@ import { Badge, Stack } from '@mui/material';
 import ClearIcon from '@mui/icons-material/Clear';
 import { convertTimestamp } from '../../utils/commonFunctions';
 import useUsersGetLog from '../../hooks/useUsersGetLog';
+import useFetchFriends from '../../hooks/useFetchFriends';
 
 
-export default function UserPageList({ userPageData, handleChatWithWho, handleRemoveItem }) {
+export default function UserPageList({ handleChatWithWho, handleRemoveItem }) {
+
   const [hoveredItemId, setHoveredItemId] = React.useState(null);
+
   const { users } = useUsersGetLog();
+
+  const { userPageData, loading, error } = useFetchFriends();
     
 
   // Function to find a user by ID from the users list
@@ -46,7 +51,7 @@ export default function UserPageList({ userPageData, handleChatWithWho, handleRe
 
   return (
     <StyledList>
-      {userPageData?.map((user, index) => {
+      {userPageData?.slice().reverse().map((user, index) => {
         return (
           <StyledListItem
             key={index}

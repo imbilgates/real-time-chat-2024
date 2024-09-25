@@ -3,11 +3,11 @@ import { UserContext } from '../context/UserContext';
 import Logout from '../componant/auth/Logout';
 import Users from '../pages/Users';
 import GroupAvatars from '../componant/MUI/GroupAvatars';
+import GroupsIcon from '@mui/icons-material/Groups';
 
 const InfoBar = () => {
 
-
-  const { user, setOpen, chatWithWho } = useContext(UserContext);
+  const { user, setOpen, chatWithWho, setOpenGrp } = useContext(UserContext);
 
   const openDialog = () => {
     setOpen(true);
@@ -34,6 +34,9 @@ const InfoBar = () => {
         <div style={{ marginTop: '10px' }}>
           <></>
         </div>}
+      <div onClick={() => setOpenGrp(true)}>
+        <GroupsIcon />
+      </div>
       <div className='logout-container'>
         <Logout />
       </div>

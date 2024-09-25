@@ -8,6 +8,7 @@ export const UserProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(false);
+  const [openGrp, setOpenGrp] = useState(false);
   const [chatWithWho, setChatWithWho] = useState([]);
   const [openNotify, setOpenNotify] = useState(false);
 
@@ -29,6 +30,8 @@ export const UserProvider = ({ children }) => {
     loading,
     open,
     setOpen,
+    openGrp,
+    setOpenGrp,
     chatWithWho,
     setChatWithWho,
     setOpenNotify,
