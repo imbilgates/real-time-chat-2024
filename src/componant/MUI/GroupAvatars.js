@@ -3,12 +3,21 @@ import { styled } from '@mui/material/styles';
 import Badge from '@mui/material/Badge';
 import Avatar from '@mui/material/Avatar';
 import { UserContext } from '../../context/UserContext';
+import { ChatContext } from '../../context/ChatContext';
 
 
 export default function GroupAvatars({ chatWithWho }) {
     const { user, setChatWithWho } = React.useContext(UserContext);
+    const { setChatPhase } = React.useContext(ChatContext);
+
+    const handleBack =() =>{
+        setChatWithWho([]);
+        setChatPhase('user');
+    }
+
+
     return (
-        <div onClick={() => setChatWithWho([])} style={{cursor: "pointer"}}>
+        <div onClick={handleBack} style={{cursor: "pointer"}}>
             <b>🔙</b>
             <Badge
                 overlap="circular"

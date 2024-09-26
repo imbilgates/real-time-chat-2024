@@ -9,7 +9,8 @@ import { ChatContext } from '../context/ChatContext';
 
 const UserPage = () => {
     
-    const { chatPhase } = useContext(ChatContext);
+    const { chatPhase, setChatPhase } = useContext(ChatContext);
+
 
     const { user, setChatWithWho } = useContext(UserContext);
 
@@ -18,6 +19,7 @@ const UserPage = () => {
 
     const handleChatWithWho = (clickedUser) => {
         setChatWithWho(clickedUser);
+        setChatPhase('messages')
     };
 
     // Function to remove a chat item from Firestore and state
@@ -34,14 +36,10 @@ const UserPage = () => {
         }
     };
 
-    if (loading) {
-        return <div>Loading...</div>;
-    }
-
     if (!chatPhase === 'user') return;
 
     return (
-        <ScrollToBottom checkInterval={100} className="message-container-scroll">
+        <ScrollToBottom className="chat-container">
             <UserPageList
                 handleChatWithWho={handleChatWithWho}
                 handleRemoveItem={handleRemoveItem} // Pass down the remove handler

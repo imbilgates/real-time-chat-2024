@@ -11,13 +11,13 @@ import UserPage from '../pages/UserPage'
 import GroupChatPage from '../pages/GroupChatPage'
 
 const Chat = () => {
+
     const { user, setOpen, chatWithWho } = useContext(UserContext);
-    const { chatPhase } = useContext(ChatContext);
+    const { chatPhase, setChatPhase } = useContext(ChatContext);
 
     useEffect(() => {
         if (!user?.displayName) setOpen(true);
-    }, [user.displayName, setOpen])
-
+    }, [user.displayName, setOpen, chatWithWho])
 
 
 
@@ -26,12 +26,17 @@ const Chat = () => {
             <FormDialog />
             <FormDialogGrp />
             <InfoBar />
-            {!chatWithWho.length === 0 && <Message />}
-            {chatPhase === 'user' && <UserPage />}
-            {chatPhase === 'group' && <GroupChatPage />}
+            {/* Only show Message component if chatWithWho is not empty */}
+            {!chatWithWho.length > 0 && chatPhase === 'messages' && <Message />}
+            {/* Only show UserPage if chatWithWho is empty and chatPhase is 'user' */}
+            {chatWithWho.length === 0 && chatPhase === 'user' && <UserPage />}
+            {/* Only show GroupChatPage if chatWithWho is empty and chatPhase is 'group' */}
+            {chatWithWho.length === 0 && chatPhase === 'group' && <GroupChatPage />}
             <Input />
+            {/* Only show TabBar if chatWithWho is empty */}
             {chatWithWho.length === 0 && <TabBar />}
         </div>
+
     )
 }
 

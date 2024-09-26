@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { Avatar, List, ListItem, ListItemAvatar, ListItemButton, ListItemText, DialogTitle, Dialog, Box, Button, Checkbox, styled } from '@mui/material';
+import { Avatar, List, ListItem, ListItemAvatar, ListItemButton, ListItemText, DialogTitle, Dialog, Box, Button, Checkbox, styled, Input } from '@mui/material';
 import { blue } from '@mui/material/colors';
 import { UserContext } from '../../context/UserContext';
 import useFetchFriends from '../../hooks/useFetchFriends';
@@ -8,9 +8,12 @@ import { doc, setDoc, Timestamp } from 'firebase/firestore'; // Use setDoc to se
 import { db } from '../../config/firebase-config';
 
 function SimpleDialog() {
-    const { openGrp, setOpenGrp } = useContext(UserContext);
+
+    const [grpName, setGrpName] = useState('');
+
+    const { user, openGrp, setOpenGrp } = useContext(UserContext);
     const { userPageData } = useFetchFriends();
-    const [selectedUsers, setSelectedUsers] = useState([]);
+    const [selectedUsers, setSelectedUsers] = useState([user.uid]);
 
     const handleClose = () => {
         setOpenGrp(false);
@@ -42,6 +45,7 @@ function SimpleDialog() {
             try {
                 // Add members to the group chat
                 await setDoc(groupChatRef, {
+                    name: grpName,
                     members: selectedUsers, // List of UIDs in the group
                     createdAt: Timestamp.now()
                 });
@@ -61,6 +65,14 @@ function SimpleDialog() {
             open={openGrp}
             classes={{ paper: useStyles.dialog }}
         >
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px' }}>
+                <Input
+                    type='text'
+                    placeholder='Group Name'
+                    onChange={(e)=>setGrpName(e.target.value)}
+                    value={grpName}
+                />
+            </Box>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px' }}>
                 <DialogTitle>Add a Group</DialogTitle>
                 <Button variant="contained" onClick={handleCreateGroup}>Create</Button>

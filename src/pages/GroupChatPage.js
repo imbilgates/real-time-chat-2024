@@ -1,6 +1,8 @@
 import React, { useContext } from 'react'
 import { ChatContext } from '../context/ChatContext';
 import ScrollToBottom from 'react-scroll-to-bottom';
+import GroupPageList from '../componant/MUI/GroupPageList';
+import { UserContext } from '../context/UserContext';
 
 const GroupChatPage = () => {
 
@@ -10,8 +12,17 @@ const GroupChatPage = () => {
   if (!chatPhase === 'group') return;
 
 
+  const { user, setChatWithWho } = useContext(UserContext);
+
+
+  const handleChatWithWho = (clickedUser) => {
+    setChatWithWho(clickedUser);
+  };
+
+
   return (
-    <ScrollToBottom checkInterval={100} className="message-container-scroll">
+    <ScrollToBottom className="chat-container" >
+      <GroupPageList handleChatWithWho={handleChatWithWho} />
     </ScrollToBottom>
   )
 }

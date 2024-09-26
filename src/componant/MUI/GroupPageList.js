@@ -9,63 +9,48 @@ import { styled } from '@mui/material/styles';
 import { Badge, CircularProgress, Stack } from '@mui/material';
 import ClearIcon from '@mui/icons-material/Clear';
 import { convertTimestamp } from '../../utils/commonFunctions';
-import useUsersGetLog from '../../hooks/useUsersGetLog';
-import useFetchFriends from '../../hooks/useFetchFriends';
+import useFetchGroupChats from '../../hooks/useFetchFriendGroup';
 
-
-export default function UserPageList({ handleChatWithWho, handleRemoveItem }) {
-
+export default function GroupPageList({ handleChatWithWho }) {
   const [hoveredItemId, setHoveredItemId] = React.useState(null);
+  const { groupChats, loading, error } = useFetchGroupChats();
 
-  const { users } = useUsersGetLog();
-
-  const { userPageData, loading, error } = useFetchFriends();
-
-
-  // Function to find a user by ID from the users list
-  const findUserById = (id) => {
-    return users.find(user => user.uid === id);
+  // Handle click event to open group chat
+  const handleChatWithWhoClick = (clickedGroup) => {
+    console.log('Clicked group:', clickedGroup);
+    handleChatWithWho(clickedGroup); 
   };
 
-  // Handle click event and pass the correct user object
-  const handleChatWithWhoClick = (clickedUserId) => {
-    const user = findUserById(clickedUserId);
-    if (user) {
-      console.log('Clicked user:', user);
-      handleChatWithWho(user);
-    } else {
-      console.error('User not found');
-    }
-  };
-
-
-  const handleMouseEnter = (userId) => {
-    setHoveredItemId(userId);
+  // Handle mouse hover effects
+  const handleMouseEnter = (groupId) => {
+    setHoveredItemId(groupId);
   };
 
   const handleMouseLeave = () => {
     setHoveredItemId(null);
   };
 
-
   if (loading) return (
     <div className='loading-container'>
-      <CircularProgress />
+        <CircularProgress />
     </div>
-  );
+);
 
-
-  if (userPageData.length === 0) { return <p style={styles.greeting}>Add a Friend to chat with them...</p>; };
+  // If no groups are available
+  if (groupChats.length === 0) {
+    return <p style={styles.greeting}>No groups available. Create a group to start chatting...</p>;
+  }
 
   return (
     <StyledList>
-      {userPageData?.slice().reverse().map((user, index) => {
+      {groupChats.slice().reverse().map((group) => {
+        const lastMessage = group.messages?.[group.messages.length - 1]; // Get the last message
         return (
           <StyledListItem
-            key={index}
+            key={group.id}
             alignItems="flex-start"
-            onClick={() => handleChatWithWhoClick(user.id)}
-            onMouseEnter={() => handleMouseEnter(user.id)}
+            onClick={() => handleChatWithWhoClick(group)}
+            onMouseEnter={() => handleMouseEnter(group.id)}
             onMouseLeave={handleMouseLeave}
           >
             <ListItemAvatar>
@@ -75,13 +60,13 @@ export default function UserPageList({ handleChatWithWho, handleRemoveItem }) {
                   anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
                   variant="dot"
                 >
-                  <Avatar alt={user.name} src={user.img} />
+                  <Avatar alt={group.name} src={group.img || ''} /> {/* Group avatar */}
                 </StyledBadge>
               </Stack>
             </ListItemAvatar>
 
             <ListItemText
-              primary={user.name}
+              primary={group.name || 'Unnamed Group'} // Display group name
               secondary={
                 <>
                   <Typography
@@ -91,17 +76,17 @@ export default function UserPageList({ handleChatWithWho, handleRemoveItem }) {
                     variant="body2"
                     color="text.primary"
                   >
-                    {convertTimestamp(user.time)} {/* Convert the Firestore timestamp */}
+                    {lastMessage ? convertTimestamp(lastMessage.timestamp) : 'No messages yet'}
                   </Typography>
-                  {user.text}
+                  {lastMessage ? lastMessage.text : 'Start the conversation...'}
                 </>
               }
             />
-            {hoveredItemId === user.id && (
+            {hoveredItemId === group.id && (
               <div
                 onClick={(e) => {
                   e.stopPropagation(); // Prevent click from triggering the chat action
-                  handleRemoveItem(user.id); // Trigger remove handler
+                  handleRemoveItem(group.id); // Trigger remove handler
                 }}
                 style={{
                   display: 'flex',
@@ -110,7 +95,7 @@ export default function UserPageList({ handleChatWithWho, handleRemoveItem }) {
                   cursor: 'pointer',
                 }}
               >
-                <ClearIcon fontSize='large' />
+                <ClearIcon fontSize="large" />
               </div>
             )}
           </StyledListItem>
@@ -120,7 +105,6 @@ export default function UserPageList({ handleChatWithWho, handleRemoveItem }) {
   );
 }
 
-
 const styles = {
   greeting: {
     display: 'flex',
@@ -128,8 +112,8 @@ const styles = {
     alignItems: 'center',
     color: 'green',
     marginTop: '150px',
-  }
-}
+  },
+};
 
 const StyledList = styled(List)(({ theme }) => ({
   width: '100%',

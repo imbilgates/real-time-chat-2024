@@ -16,7 +16,7 @@ const TabBar = () => {
     }
 
   return (
-    <div style={{ display: 'flex', justifyContent: 'space-around', alignItems: 'center'}}>
+    <div className='tab-bar' style={{ display: 'flex', justifyContent: 'space-around', alignItems: 'center'}}>
         <PersonSharpIcon onClick={handleUser}/>
         <Diversity3SharpIcon onClick={handleGrp}/>
     </div>
