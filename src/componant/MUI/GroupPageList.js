@@ -11,7 +11,7 @@ import ClearIcon from '@mui/icons-material/Clear';
 import { convertTimestamp } from '../../utils/commonFunctions';
 import useFetchGroupChats from '../../hooks/useFetchFriendGroup';
 
-export default function GroupPageList({ handleChatWithWho }) {
+export default function GroupPageList({ handleChatWithWho, handleRemoveItem }) {
   const [hoveredItemId, setHoveredItemId] = React.useState(null);
   const { groupChats, loading, error } = useFetchGroupChats();
 
@@ -43,7 +43,7 @@ export default function GroupPageList({ handleChatWithWho }) {
 
   return (
     <StyledList>
-      {groupChats.slice().reverse().map((group) => {
+      {groupChats.map((group) => {
         const lastMessage = group.messages?.[group.messages.length - 1]; // Get the last message
         return (
           <StyledListItem

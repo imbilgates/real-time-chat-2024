@@ -6,9 +6,10 @@ import { db } from '../config/firebase-config';
 import useFetchFriends from '../hooks/useFetchFriends';
 import ScrollToBottom from 'react-scroll-to-bottom';
 import { ChatContext } from '../context/ChatContext';
+import Users from './Users';
 
 const UserPage = () => {
-    
+
     const { chatPhase, setChatPhase } = useContext(ChatContext);
 
 
@@ -29,7 +30,7 @@ const UserPage = () => {
             const updatedChats = userPageData.filter(chat => chat.id !== id); // Filter out the removed chat
 
             try {
-                await updateDoc(chatRef, { chats: updatedChats });
+                await updateDoc(chatRef, { updatedChats });
             } catch (error) {
                 console.error('Error removing chat:', error);
             }
@@ -39,12 +40,20 @@ const UserPage = () => {
     if (!chatPhase === 'user') return;
 
     return (
-        <ScrollToBottom className="chat-container">
-            <UserPageList
-                handleChatWithWho={handleChatWithWho}
-                handleRemoveItem={handleRemoveItem} // Pass down the remove handler
-            />
-        </ScrollToBottom>
+        <>
+            <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center' }}>
+                <h3>USERS PAGE</h3>
+                <div>
+                    <Users />
+                </div>
+            </div>
+            <ScrollToBottom className="chat-container" >
+                <UserPageList
+                    handleChatWithWho={handleChatWithWho}
+                    handleRemoveItem={handleRemoveItem} // Pass down the remove handler
+                />
+            </ScrollToBottom >
+        </>
     );
 }
 

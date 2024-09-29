@@ -9,6 +9,7 @@ import TabBar from './TabBar'
 import { ChatContext } from '../context/ChatContext'
 import UserPage from '../pages/UserPage'
 import GroupChatPage from '../pages/GroupChatPage'
+import Users from '../pages/Users'
 
 const Chat = () => {
 
@@ -22,19 +23,51 @@ const Chat = () => {
 
 
     return (
-        <div className="chat-container">
+        <div className="">
             <FormDialog />
             <FormDialogGrp />
-            <InfoBar />
-            {/* Only show Message component if chatWithWho is not empty */}
-            {!chatWithWho.length > 0 && chatPhase === 'messages' && <Message />}
-            {/* Only show UserPage if chatWithWho is empty and chatPhase is 'user' */}
-            {chatWithWho.length === 0 && chatPhase === 'user' && <UserPage />}
-            {/* Only show GroupChatPage if chatWithWho is empty and chatPhase is 'group' */}
-            {chatWithWho.length === 0 && chatPhase === 'group' && <GroupChatPage />}
-            <Input />
-            {/* Only show TabBar if chatWithWho is empty */}
-            {chatWithWho.length === 0 && <TabBar />}
+
+
+            <div className="chat-app-container">
+                {/* Left Side - Search Box and Search Items */}
+
+
+                {/* Right Side - Users Page and Group Chat Users Page */}
+                <div className="right-side">
+                    <div className="users-page">
+                        <UserPage />
+                        {/* Add more users */}
+                    </div>
+                    <div className="group-chat-users-page">
+                        <GroupChatPage />
+                        {/* Add more group chat users */}
+                    </div>
+                </div>
+
+
+                {/* Center Area */}
+                <div className="center-area">
+                    {/* Top Info Bar */}
+                    <div className="info-bar">
+                        <InfoBar />
+                    </div>
+
+                    {/* Message Display Area */}
+                    <div className="message-display">
+                        {!chatWithWho.length > 0 && chatPhase === 'messages' && <Message />}
+                        {/* Add more messages */}
+                    </div>
+
+                    {/* Bottom Input Box */}
+                    <div className="input-box">
+                        <Input />
+                    </div>
+                </div>
+
+            </div>
+
+
+
         </div>
 
     )

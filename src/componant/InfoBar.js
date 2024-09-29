@@ -1,13 +1,11 @@
 import React, { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
 import Logout from '../componant/auth/Logout';
-import Users from '../pages/Users';
-import GroupAvatars from '../componant/MUI/GroupAvatars';
-import GroupsIcon from '@mui/icons-material/Groups';
+import UsersAvatars from './MUI/UsersAvatars';
 
 const InfoBar = () => {
 
-  const { user, setOpen, chatWithWho, setOpenGrp } = useContext(UserContext);
+  const { user, setOpen, chatWithWho } = useContext(UserContext);
 
   const openDialog = () => {
     setOpen(true);
@@ -23,20 +21,14 @@ const InfoBar = () => {
             <b>{user?.displayName}</b>
           </div>
         ) : (
-          <GroupAvatars chatWithWho={chatWithWho} />
+          <UsersAvatars chatWithWho={chatWithWho} />
         )
         }
-      </div>
-      <div>
-        {chatWithWho.length === 0 && <Users />}
       </div>
       {chatWithWho.length !== 0 &&
         <div style={{ marginTop: '10px' }}>
           <></>
         </div>}
-      <div onClick={() => setOpenGrp(true)}>
-        <GroupsIcon />
-      </div>
       <div className='logout-container'>
         <Logout />
       </div>
