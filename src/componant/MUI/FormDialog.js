@@ -13,6 +13,7 @@ import { doc, setDoc } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage'; // Import necessary Firebase Storage functions
 import { InputAdornment, IconButton } from '@mui/material';
 import PhotoCamera from '@mui/icons-material/PhotoCamera';
+import Swal from 'sweetalert2';
 
 export default function FormDialog() {
     const { open, setOpen, setUser } = useContext(UserContext);
@@ -55,6 +56,17 @@ export default function FormDialog() {
                 await updateProfile(currentUser, {
                     displayName: newDisplayName || currentUser.displayName,
                     photoURL: photoURL || currentUser.photoURL
+                });
+
+                // Show success SweetAlert after group creation
+                Swal.fire({
+                    icon: 'success',
+                    title: 'User Profile',
+                    text: 'Profile has been created successfully.',
+                    position: 'top-end',  // Position it at the top right
+                    toast: true,          // Make it a toast
+                    showConfirmButton: false, // No confirm button
+                    timer: 3000           // Auto close after 3 seconds
                 });
 
                 setMessage('Profile updated successfully');
