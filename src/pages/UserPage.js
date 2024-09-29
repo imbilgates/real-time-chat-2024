@@ -23,21 +23,21 @@ const UserPage = () => {
         setChatPhase('messages')
     };
 
-    // Function to remove a chat item from Firestore and state
+
     const handleRemoveItem = async (id) => {
         if (user?.uid) {
             const chatRef = doc(db, 'userPage', user.uid);
             const updatedChats = userPageData.filter(chat => chat.id !== id); // Filter out the removed chat
 
             try {
-                await updateDoc(chatRef, { updatedChats });
+                await updateDoc(chatRef, { chats: updatedChats });
             } catch (error) {
                 console.error('Error removing chat:', error);
             }
         }
     };
 
-    if (!chatPhase === 'user') return;
+
 
     return (
         <>

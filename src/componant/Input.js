@@ -9,9 +9,16 @@ const Input = () => {
     const { message, setMessage } = useContext(ChatContext);
 
     const getUniqueChatId = (user, chatWithWho) => {
-        const sortedUids = [user.uid, chatWithWho.uid].sort();
-        return sortedUids.join('');
+        if (Array.isArray(chatWithWho.members)) {
+            // If chatWithWho is a group, return the group ID
+            return chatWithWho.groupId; 
+        } else {
+            // For one-to-one chats, sort user UIDs
+            const sortedUids = [user.uid, chatWithWho.uid].sort();
+            return sortedUids.join('');
+        }
     };
+    
 
     const sendMessage = async (e) => {
         e.preventDefault();

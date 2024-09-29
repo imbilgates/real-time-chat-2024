@@ -4,51 +4,71 @@ import { blue } from '@mui/material/colors';
 import { UserContext } from '../../context/UserContext';
 import useFetchFriends from '../../hooks/useFetchFriends';
 import ScrollToBottom from 'react-scroll-to-bottom';
-import { doc, setDoc, Timestamp } from 'firebase/firestore'; // Use setDoc to set Firestore data
+import { doc, setDoc, Timestamp } from 'firebase/firestore';
 import { db } from '../../config/firebase-config';
+import Swal from 'sweetalert2';
 
 function SimpleDialog() {
-
     const [grpName, setGrpName] = useState('');
-
     const { user, openGrp, setOpenGrp } = useContext(UserContext);
     const { userPageData } = useFetchFriends();
     const [selectedUsers, setSelectedUsers] = useState([user.uid]);
+    const [visibleUsersCount, setVisibleUsersCount] = useState(4);
 
     const handleClose = () => {
         setOpenGrp(false);
     };
 
-    // Handle checking and unchecking of users
     const handleGroupSelection = (id, checked) => {
         if (checked) {
-            setSelectedUsers((prev) => [...prev, id]);
+            setSelectedUsers((prev) => [...new Set([...prev, id])]); // Prevent duplicate IDs
         } else {
             setSelectedUsers((prev) => prev.filter((userId) => userId !== id));
         }
     };
 
-    // Function to generate unique group chat ID
     const getUniqueGroupChatId = (selectedUsers) => {
-        const sortedIds = selectedUsers.sort(); // Sort the user IDs
-        return sortedIds.join('-'); // Combine the IDs to create a unique group chat ID
+        const sortedIds = [...new Set(selectedUsers)].sort(); // Prevent duplicate IDs and sort
+        return sortedIds.join('-');
     };
 
     const handleCreateGroup = async () => {
+        handleClose();
+        if (!grpName.trim()) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Please enter a group name!',
+            });
+            return;
+        }
+
         if (selectedUsers.length > 1) {
             const groupChatId = getUniqueGroupChatId(selectedUsers);
             console.log('Group Chat ID:', groupChatId);
 
-            // Create group chat document reference
             const groupChatRef = doc(db, 'groupChats', groupChatId);
 
             try {
-                // Add members to the group chat
                 await setDoc(groupChatRef, {
+                    groupId: groupChatId,
                     name: grpName,
-                    members: selectedUsers, // List of UIDs in the group
+                    members: selectedUsers,
+                    createdBY: user?.uid,
                     createdAt: Timestamp.now()
                 });
+
+                // Show success SweetAlert after group creation
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Group Created!',
+                    text: 'Your group has been created successfully.',
+                    position: 'top-end',  // Position it at the top right
+                    toast: true,          // Make it a toast
+                    showConfirmButton: false, // No confirm button
+                    timer: 3000           // Auto close after 3 seconds
+                });
+
 
                 console.log('Group created successfully');
             } catch (error) {
@@ -59,29 +79,32 @@ function SimpleDialog() {
         }
     };
 
+    const loadMoreUsers = () => {
+        setVisibleUsersCount((prevCount) => prevCount + 4);
+    };
+
     return (
         <Dialog
             onClose={handleClose}
             open={openGrp}
             classes={{ paper: useStyles.dialog }}
         >
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px' }}>
+            <DialogTitle>Add a Group</DialogTitle>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px' }}>
                 <Input
                     type='text'
                     placeholder='Group Name'
-                    onChange={(e)=>setGrpName(e.target.value)}
+                    onChange={(e) => setGrpName(e.target.value)}
                     value={grpName}
+                    sx={{ flexGrow: 1, marginRight: '8px' }} // Adjust for spacing
                 />
-            </Box>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px' }}>
-                <DialogTitle>Add a Group</DialogTitle>
                 <Button variant="contained" onClick={handleCreateGroup}>Create</Button>
             </Box>
             <ScrollToBottom checkInterval={100} className="message-container-scroll">
                 <List sx={{ pt: 0 }}>
-                    {userPageData?.slice(0, 4).reverse().map((user, index) => (
+                    {userPageData?.slice(0, visibleUsersCount).reverse().map((user, index) => (
                         <ListItem key={index} className={useStyles.listItem}>
-                            <ListItemButton>
+                            <ListItemButton onClick={() => handleGroupSelection(user.id, !selectedUsers.includes(user.id))}>
                                 <ListItemAvatar>
                                     <Avatar src={user.img} className={useStyles.avatar} />
                                 </ListItemAvatar>
@@ -91,6 +114,7 @@ function SimpleDialog() {
                                 />
                                 <Checkbox
                                     className={useStyles.checkbox}
+                                    checked={selectedUsers.includes(user.id)}
                                     onChange={(event) => handleGroupSelection(user.id, event.target.checked)}
                                 />
                             </ListItemButton>
@@ -98,6 +122,9 @@ function SimpleDialog() {
                     ))}
                 </List>
             </ScrollToBottom>
+            <Box sx={{ display: 'flex', justifyContent: 'center', padding: '16px' }}>
+                <Button variant="outlined" onClick={loadMoreUsers}>Load More</Button>
+            </Box>
         </Dialog>
     );
 }
@@ -107,15 +134,8 @@ export default SimpleDialog;
 const useStyles = styled((theme) => ({
     dialog: {
         borderRadius: '10px',
-        padding: '20px',
-        width: '400px',
-    },
-    dialogTitle: {
-        fontWeight: 'bold',
-        fontSize: '20px',
-        textAlign: 'center',
-        marginBottom: '10px',
-        color: blue[700],
+        width: '400px',  // Fixed width
+        maxHeight: '500px', // Set a fixed height if needed
     },
     listItem: {
         backgroundColor: blue[50],
@@ -140,15 +160,5 @@ const useStyles = styled((theme) => ({
         '&.Mui-checked': {
             color: blue[600],
         },
-    },
-    button: {
-        backgroundColor: blue[700],
-        '&:hover': {
-            backgroundColor: blue[800],
-        },
-        color: 'white',
-        borderRadius: '20px',
-        padding: '10px 20px',
-        fontWeight: 'bold',
     },
 }));

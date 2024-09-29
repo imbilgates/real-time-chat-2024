@@ -19,28 +19,39 @@ const Message = () => {
     const { user, chatWithWho } = useContext(UserContext);
 
     const getUniqueChatId = (user, chatWithWho) => {
-        const sortedUids = [user.uid, chatWithWho.uid].sort();
-        return sortedUids.join('');
+        if (Array.isArray(chatWithWho.members)) {
+            // If chatWithWho is a group, return the group ID
+            return chatWithWho.groupId; 
+        } else {
+            // For one-to-one chats, sort user UIDs
+            const sortedUids = [user.uid, chatWithWho.uid].sort();
+            return sortedUids.join('');
+        }
     };
+    
 
     useEffect(() => {
-        console.log("hi");
         if (user && chatWithWho) {
-            setLoading(true);
-            const chatRef = doc(db, "chats", getUniqueChatId(user, chatWithWho));
+            setLoading(true); // Start loading when switching chats
+    
+            const chatId = getUniqueChatId(user, chatWithWho);
+            const chatRef = doc(db, "chats", chatId);
+            
             const unsubscribe = onSnapshot(chatRef, (snapshot) => {
                 if (snapshot.exists()) {
                     const data = snapshot.data();
                     setMessages(data.messages || []);
                 } else {
-                    setMessages([]);
+                    setMessages([]); // Reset messages if no data
                 }
-                setLoading(false);
+                setLoading(false); // Stop loading once data is fetched
             });
-
-            return () => unsubscribe();
+    
+            return () => unsubscribe(); // Unsubscribe from the previous chat when switching
         }
     }, [user, chatWithWho, setMessages]);
+    
+    
 
     const deleteChat = async (msg) => {
         try {
@@ -68,7 +79,7 @@ const Message = () => {
 
 
     return (
-        <div className={`${chatWithWho.length === 0 ? 'message-container' : "message-container-bg"}`} >
+        <div className={`${chatWithWho?.length === 0 ? 'message-container' : "message-container-bg"}`} >
             {/* <ThemeDialog /> */}
             <ScrollToBottom checkInterval={100} className={`${chatWithWho.length !== 0 && "message-container-scroll"}`}>
                 {messages?.map((msg, index) => (

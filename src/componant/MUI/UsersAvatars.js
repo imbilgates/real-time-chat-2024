@@ -16,7 +16,6 @@ export default function UsersAvatars({ chatWithWho }) {
 
     // Filter users whose uids are in the chatWithWho.members array
     const filteredUsers = users.filter(user => chatWithWho?.members?.includes(user.uid));
-    console.log(filteredUsers);
 
     const handleBack = () => {
         setChatWithWho([]);
