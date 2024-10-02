@@ -10,6 +10,7 @@ import { ChatContext } from '../context/ChatContext'
 import UserPage from '../pages/UserPage'
 import GroupChatPage from '../pages/GroupChatPage'
 import Users from '../pages/Users'
+import ShowActiveUsers from './MUI/ShowActiveUsers'
 
 const Chat = () => {
 
@@ -54,6 +55,7 @@ const Chat = () => {
 
                     {/* Message Display Area */}
                     <div className="message-display">
+                        { chatPhase === 'user' && <ShowActiveUsers />}
                         {!chatWithWho.length > 0 && chatPhase === 'messages' && <Message />}
                         {/* Add more messages */}
                     </div>

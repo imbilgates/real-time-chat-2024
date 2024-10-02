@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile } from 'firebase/auth';
-import { doc, setDoc } from 'firebase/firestore';
+import { doc, setDoc, Timestamp } from 'firebase/firestore';
 import { auth, db } from '../config/firebase-config';
 
 const authSlice = createSlice({
@@ -74,7 +74,7 @@ export const login = createAsyncThunk(
           email: user.email,
           photoURL: user.photoURL || '',
           uid: user.uid,
-          lastLogin: new Date().toISOString(),
+          lastLogin:  Timestamp.now(),
         },
         { merge: true }
       );
@@ -109,7 +109,7 @@ export const register = createAsyncThunk(
         email: user.email,
         photoURL: profilePhotoURL,
         uid: user.uid,
-        lastLogin: new Date().toISOString()
+        lastLogin: Timestamp.now()
       }, { merge: true });
 
       return user;

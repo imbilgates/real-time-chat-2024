@@ -10,15 +10,27 @@ import { Badge, CircularProgress, Stack } from '@mui/material';
 import ClearIcon from '@mui/icons-material/Clear';
 import { convertTimestamp } from '../../utils/commonFunctions';
 import useFetchGroupChats from '../../hooks/useFetchFriendGroup';
+import { UserContext } from '../../context/UserContext';
+import { ChatContext } from '../../context/ChatContext';
 
-export default function GroupPageList({ handleChatWithWho, handleRemoveItem }) {
+export default function GroupPageList({ handleRemoveItem }) {
   const [hoveredItemId, setHoveredItemId] = React.useState(null);
   const { groupChats, loading, error } = useFetchGroupChats();
 
+  const { setChatWithWho } = React.useContext(UserContext);
+  const { setChatPhase } = React.useContext(ChatContext);
+
+
   // Handle click event to open group chat
   const handleChatWithWhoClick = (clickedGroup) => {
-    console.log('Clicked group:', clickedGroup);
-    handleChatWithWho(clickedGroup); 
+
+    if (clickedGroup) {
+      console.log('Clicked group:', clickedGroup);
+      setChatWithWho(clickedGroup);
+      setChatPhase('messages')
+    } else {
+      console.error('User not found');
+    }
   };
 
   // Handle mouse hover effects
@@ -32,9 +44,9 @@ export default function GroupPageList({ handleChatWithWho, handleRemoveItem }) {
 
   if (loading) return (
     <div className='loading-container'>
-        <CircularProgress />
+      <CircularProgress />
     </div>
-);
+  );
 
   // If no groups are available
   if (groupChats.length === 0) {

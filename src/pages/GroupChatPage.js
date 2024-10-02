@@ -15,14 +15,9 @@ const GroupChatPage = () => {
   if (!chatPhase === 'group') return;
 
 
-  const { user, setChatWithWho, setOpenGrp } = useContext(UserContext);
+  const { user, setOpenGrp } = useContext(UserContext);
 
 
-  const handleChatWithWho = (clickedUser) => {
-    setChatWithWho(clickedUser);
-    console.log(clickedUser);
-    
-  };
 
   const handleRemoveItem = async (id) => {
     if (user?.uid) {
@@ -49,7 +44,6 @@ const GroupChatPage = () => {
 
       <ScrollToBottom className="chat-container" >
         <GroupPageList
-          handleChatWithWho={handleChatWithWho}
           handleRemoveItem={handleRemoveItem}
         />
       </ScrollToBottom>

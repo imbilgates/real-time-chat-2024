@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { doc, getFirestore, setDoc } from "firebase/firestore";
+import { doc, getFirestore, setDoc, Timestamp } from "firebase/firestore";
 import { getAuth, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { getStorage } from "firebase/storage";
 
@@ -30,7 +30,7 @@ export const signInWithGoogle = async () => {
       email: user.email,
       photoURL: user.photoURL || "",
       uid: user.uid,
-      lastLogin: new Date().toISOString()
+      lastLogin: Timestamp.now()
     }, { merge: true });
   } catch (error) {
     console.error("Error signing in with Google:", error);
