@@ -1,7 +1,7 @@
 import React, { useContext } from 'react'
 import { ChatContext } from '../context/ChatContext';
 import ScrollToBottom from 'react-scroll-to-bottom';
-import GroupPageList from '../componant/MUI/GroupPageList';
+import GroupPageList from '../component/MUI/GroupPageList';
 import AddIcon from '@mui/icons-material/Add';
 import { UserContext } from '../context/UserContext';
 import { db } from '../config/firebase-config';

@@ -3,8 +3,8 @@ import Message from './Message'
 import Input from './Input'
 import InfoBar from './InfoBar'
 import { UserContext } from '../context/UserContext'
-import FormDialog from '../componant/MUI/FormDialog'
-import FormDialogGrp from '../componant/MUI/FormDialogGrp'
+import FormDialog from '../component/MUI/FormDialog'
+import FormDialogGrp from '../component/MUI/FormDialogGrp'
 import TabBar from './TabBar'
 import { ChatContext } from '../context/ChatContext'
 import UserPage from '../pages/UserPage'
@@ -24,7 +24,7 @@ const Chat = () => {
 
 
     return (
-        <div className="">
+        <div className="" >
             <FormDialog />
             <FormDialogGrp />
 

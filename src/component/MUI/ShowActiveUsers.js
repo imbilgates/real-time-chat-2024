@@ -1,5 +1,5 @@
 import React from 'react';
-import { Avatar, Typography } from '@mui/material';
+import { Avatar, CircularProgress, Typography } from '@mui/material';
 import AvatarGroup from '@mui/material/AvatarGroup';
 import { styled } from '@mui/material/styles';
 import useFetchUsersByLastLogin from '../../hooks/useFetchUsersByLastLogin';
@@ -8,7 +8,11 @@ import useFetchUsersByLastLogin from '../../hooks/useFetchUsersByLastLogin';
 const ShowActiveUsers = () => {
     const { users, loading, error } = useFetchUsersByLastLogin();
 
-    if (loading) return <Typography variant="h6" align="center">Loading...</Typography>;
+    if (loading) return (
+        <div className='loading-container'>
+            <CircularProgress />
+        </div>
+    );
 
     if (error) return <Typography variant="h6" color="error" align="center">Error: {error.message}</Typography>;
 
@@ -16,6 +20,7 @@ const ShowActiveUsers = () => {
 
     return (
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+            <div>Recent Active Users...</div>
             <AvatarGroupStyled max={4}>
                 {filteredUsers.map(user => (
                     <Avatar
@@ -39,3 +44,4 @@ const AvatarGroupStyled = styled(AvatarGroup)(({ theme }) => ({
         border: `2px solid ${theme.palette.background.paper}`,
     },
 }));
+

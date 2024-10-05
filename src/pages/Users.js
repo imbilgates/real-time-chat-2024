@@ -1,7 +1,7 @@
 import React, { useContext, useRef, useState } from 'react';
 import useUsersGetLog from '../hooks/useUsersGetLog';
 import { Input } from '@mui/material';
-import SearchBox from '../componant/MUI/SearchBox';
+import SearchBox from '../component/MUI/SearchBox';
 import { UserContext } from '../context/UserContext';
 
 const Users = () => {

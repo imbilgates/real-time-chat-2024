@@ -1,5 +1,5 @@
 import React from 'react';
-import Chat from '../componant/Chat';
+import Chat from '../component/Chat';
 
 const Home = () => {
   return (

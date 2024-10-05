@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
-import Logout from '../componant/auth/Logout';
+import Logout from '../component/auth/Logout';
 import UsersAvatars from './MUI/UsersAvatars';
 
 const InfoBar = () => {

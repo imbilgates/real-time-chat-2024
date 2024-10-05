@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import UserPageList from '../componant/MUI/UserPageList';
+import UserPageList from '../component/MUI/UserPageList';
 import { UserContext } from '../context/UserContext';
 import { doc, updateDoc } from 'firebase/firestore';
 import { db } from '../config/firebase-config';
