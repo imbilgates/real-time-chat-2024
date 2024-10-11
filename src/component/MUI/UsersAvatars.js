@@ -7,29 +7,38 @@ import { UserContext } from '../../context/UserContext';
 import { ChatContext } from '../../context/ChatContext';
 import useUsersGetlog from '../../hooks/useUsersGetLog';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import { blue } from '@mui/material/colors';
+import PersonIcon from '@mui/icons-material/Person';
+import AddIcon from '@mui/icons-material/Add';
+import { Button, Dialog, DialogTitle, List, ListItem, ListItemAvatar, ListItemButton, ListItemText, Box } from '@mui/material';
 
 export default function UsersAvatars({ chatWithWho }) {
+    const [open, setOpen] = React.useState(false);
     const { user, setChatWithWho } = React.useContext(UserContext);
     const { setChatPhase } = React.useContext(ChatContext);
+    const { users, loading, error } = useUsersGetlog();
 
-    const { users, loading, error } = useUsersGetlog(); // Fetch users data from Firestore
-
-    // Filter users whose uids are in the chatWithWho.members array
     const filteredUsers = users.filter(user => chatWithWho?.members?.includes(user.uid));
 
-    const handleBack = () => {
+    const handleBack = (e) => {
+        e.stopPropagation();
         setChatWithWho([]);
         setChatPhase('user');
     };
 
+    const handleGrpList = () => {
+        setOpen(true);
+    };
+
+    const handleClose = () => {
+        setOpen(false);
+    };
+
     return (
-        <Container>
-            {/* Back button */}
+        <Container onClick={handleGrpList}>
             <BackButton onClick={handleBack}>
                 <ArrowBackIcon style={{ fontSize: '24px' }} />
             </BackButton>
-
-            {/* Conditional rendering based on chatWithWho.members */}
             {chatWithWho?.members?.length > 0 ? (
                 <AvatarGroupStyled max={4}>
                     {filteredUsers.map(filteredUser => (
@@ -49,19 +58,24 @@ export default function UsersAvatars({ chatWithWho }) {
                     <Avatar alt={user?.displayName} src={chatWithWho?.photoURL} />
                 </Badge>
             )}
-
             &nbsp;
             <GroupName>{chatWithWho?.displayName || chatWithWho?.name}</GroupName>
-
-            {/* Display loading or error message */}
             {loading && <LoadingMessage>Loading...</LoadingMessage>}
             {error && <ErrorMessage>Error loading users</ErrorMessage>}
+
+            {chatWithWho?.members &&
+                <SimpleDialog
+                    chatWithWho={chatWithWho}
+                    open={open}
+                    handleClose={handleClose}
+                    users={filteredUsers}
+                />
+            }
         </Container>
     );
 }
 
 // Styles
-
 const Container = styled('div')(({ theme }) => ({
     display: 'flex',
     alignItems: 'center',
@@ -109,4 +123,70 @@ const LoadingMessage = styled('p')(({ theme }) => ({
 const ErrorMessage = styled('p')(({ theme }) => ({
     color: theme.palette.error.main,
     marginLeft: '16px',
+}));
+
+function SimpleDialog({ open, handleClose, users, chatWithWho }) {
+    return (
+        <Dialog
+            open={open}
+            onClick={handleClose}
+            PaperProps={{
+                style: {
+                    width: '400px',
+                    height: '300px',
+                    borderRadius: '12px',
+                    overflowY: 'hidden',
+                },
+            }}
+        >
+            <Box onClick={(e) => e.stopPropagation()}>
+                <DialogTitle>
+                    {chatWithWho.name} <b>Group</b>
+                    <Button onClick={handleClose} style={{ float: 'right' }}>❌</Button>
+                </DialogTitle>
+                <ScrollContainer>
+                    <List>
+                        {users.map((user) => (
+                            <ListItem disableGutters key={user.uid}>
+                                <ListItemButton onClick={() => handleClose()}>
+                                    <ListItemAvatar>
+                                        <Avatar src={user.photoURL}>
+                                            {!user.photoURL && <PersonIcon />}
+                                        </Avatar>
+                                    </ListItemAvatar>
+                                    <ListItemText primary={user.displayName || user.email} />
+                                </ListItemButton>
+                            </ListItem>
+                        ))}
+                        <ListItem disableGutters>
+                            <ListItemButton onClick={() => handleClose()}>
+                                <ListItemAvatar>
+                                    <Avatar>
+                                        <AddIcon />
+                                    </Avatar>
+                                </ListItemAvatar>
+                                <ListItemText primary="Add Members" />
+                            </ListItemButton>
+                        </ListItem>
+                    </List>
+                </ScrollContainer>
+            </Box>
+        </Dialog>
+    );
+}
+
+// Custom scrollbar styling
+const ScrollContainer = styled('div')(({ theme }) => ({
+    height: '230px',
+    overflowY: 'auto',
+    '&::-webkit-scrollbar': {
+        width: '8px',
+    },
+    '&::-webkit-scrollbar-thumb': {
+        backgroundColor: theme.palette.primary.main,
+        borderRadius: '8px',
+    },
+    '&::-webkit-scrollbar-thumb:hover': {
+        backgroundColor: theme.palette.primary.dark,
+    },
 }));
