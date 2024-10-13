@@ -3,20 +3,20 @@ import { styled } from '@mui/material/styles';
 import Badge from '@mui/material/Badge';
 import Avatar from '@mui/material/Avatar';
 import AvatarGroup from '@mui/material/AvatarGroup';
-import { UserContext } from '../../context/UserContext';
-import { ChatContext } from '../../context/ChatContext';
-import useUsersGetlog from '../../hooks/useUsersGetLog';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import { blue } from '@mui/material/colors';
 import PersonIcon from '@mui/icons-material/Person';
 import AddIcon from '@mui/icons-material/Add';
 import { Button, Dialog, DialogTitle, List, ListItem, ListItemAvatar, ListItemButton, ListItemText, Box } from '@mui/material';
+import { UserContext } from '../../context/UserContext';
+import { ChatContext } from '../../context/ChatContext';
+import useUsersGetLog from '../../hooks/useUsersGetLog';
+import { convertTimestamp } from '../../utils/commonFunctions';
 
 export default function UsersAvatars({ chatWithWho }) {
     const [open, setOpen] = React.useState(false);
     const { user, setChatWithWho } = React.useContext(UserContext);
     const { setChatPhase } = React.useContext(ChatContext);
-    const { users, loading, error } = useUsersGetlog();
+    const { users, loading, error } = useUsersGetLog();
 
     const filteredUsers = users.filter(user => chatWithWho?.members?.includes(user.uid));
 
@@ -125,7 +125,17 @@ const ErrorMessage = styled('p')(({ theme }) => ({
     marginLeft: '16px',
 }));
 
+// SimpleDialog component
 function SimpleDialog({ open, handleClose, users, chatWithWho }) {
+    const { users: user } = useUsersGetLog();
+
+    // Function to find a user by ID from the users list
+    const findUserById = (id) => {
+        return user.find(user => user.uid === id);
+    };
+
+    const createdBy = findUserById(chatWithWho?.createdBY);
+
     return (
         <Dialog
             open={open}
@@ -144,6 +154,9 @@ function SimpleDialog({ open, handleClose, users, chatWithWho }) {
                     {chatWithWho.name} <b>Group</b>
                     <Button onClick={handleClose} style={{ float: 'right' }}>❌</Button>
                 </DialogTitle>
+                <CreatedAtText>
+                    Created At: {convertTimestamp(chatWithWho?.createdAt)}
+                </CreatedAtText>
                 <ScrollContainer>
                     <List>
                         {users.map((user) => (
@@ -154,18 +167,14 @@ function SimpleDialog({ open, handleClose, users, chatWithWho }) {
                                             {!user.photoURL && <PersonIcon />}
                                         </Avatar>
                                     </ListItemAvatar>
-                                    <ListItemText primary={user.displayName || user.email} />
+                                    <ListItemText primary={createdBy?.displayName === user.displayName ? <span>{user.displayName} <b style={{ color: 'red' }}>Admin</b></span> : user.displayName || user.email} />
                                 </ListItemButton>
                             </ListItem>
                         ))}
                         <ListItem disableGutters>
                             <ListItemButton onClick={() => handleClose()}>
                                 <ListItemAvatar>
-                                    <Avatar>
-                                        <AddIcon />
-                                    </Avatar>
                                 </ListItemAvatar>
-                                <ListItemText primary="Add Members" />
                             </ListItemButton>
                         </ListItem>
                     </List>
@@ -174,6 +183,13 @@ function SimpleDialog({ open, handleClose, users, chatWithWho }) {
         </Dialog>
     );
 }
+
+// Styles for the Created At text
+const CreatedAtText = styled('p')(({ theme }) => ({
+    fontSize: '0.875rem',
+    color: theme.palette.text.secondary,
+    margin: '0 16px 16px 16px',
+}));
 
 // Custom scrollbar styling
 const ScrollContainer = styled('div')(({ theme }) => ({

@@ -12,6 +12,7 @@ import { doc, getDoc, setDoc, Timestamp, updateDoc } from 'firebase/firestore';
 import { db } from '../../config/firebase-config';
 
 export default function ListBox({ filterUser, search, setSearch }) {
+  
   const { user, setChatWithWho } = React.useContext(UserContext);
 
   const handleChatWithWho = async (clickedUser) => {

@@ -20,7 +20,6 @@ const ShowActiveUsers = () => {
 
     return (
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-            <div>Recent Active Users...</div>
             <AvatarGroupStyled max={4}>
                 {filteredUsers.map(user => (
                     <Avatar
