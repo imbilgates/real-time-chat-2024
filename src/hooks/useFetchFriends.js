@@ -32,7 +32,7 @@ const useFetchFriends = () => {
 
             return () => unsubscribe();
         }
-    }, []);
+    }, [user]);
 
     return { userPageData, loading, error };
 };

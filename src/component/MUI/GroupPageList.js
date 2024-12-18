@@ -15,7 +15,7 @@ import { ChatContext } from '../../context/ChatContext';
 
 export default function GroupPageList({ handleRemoveItem }) {
   const [hoveredItemId, setHoveredItemId] = React.useState(null);
-  const { groupChats, loading, error } = useFetchGroupChats();
+  const { groupChats, loading } = useFetchGroupChats();
 
   const { setChatWithWho } = React.useContext(UserContext);
   const { setChatPhase } = React.useContext(ChatContext);
