@@ -11,10 +11,6 @@ const GroupChatPage = () => {
 
   const { chatPhase } = useContext(ChatContext);
 
-
-  if (!chatPhase === 'group') return;
-
-
   const { user, setOpenGrp } = useContext(UserContext);
 
 
@@ -22,7 +18,7 @@ const GroupChatPage = () => {
   const handleRemoveItem = async (id) => {
     if (user?.uid) {
       const chatRef = doc(db, 'groupChats', id);
-  
+
       try {
         await deleteDoc(chatRef); // Delete the entire group chat document
       } catch (error) {
@@ -32,6 +28,7 @@ const GroupChatPage = () => {
   };
 
 
+  if (!chatPhase === 'group') return;
 
   return (
     <>
