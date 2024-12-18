@@ -11,9 +11,9 @@ function App() {
   return (
     <div className="App">
       <Routes>
-        <Route path='*' element={!user ? <Auth /> : <Navigate to="/home" />}></Route>
+        <Route path='*' element={!user ? <Auth /> : <Navigate to="/" />}></Route>
         <Route element={<ProtectRoute user={user} />}>
-          <Route path="/home" element={<Home />} />
+          <Route path="/" element={<Home />} />
         </Route>
       </Routes>
     </div>
