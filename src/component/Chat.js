@@ -5,17 +5,15 @@ import InfoBar from './InfoBar'
 import { UserContext } from '../context/UserContext'
 import FormDialog from '../component/MUI/FormDialog'
 import FormDialogGrp from '../component/MUI/FormDialogGrp'
-import TabBar from './TabBar'
 import { ChatContext } from '../context/ChatContext'
 import UserPage from '../pages/UserPage'
 import GroupChatPage from '../pages/GroupChatPage'
-import Users from '../pages/Users'
 import ShowActiveUsers from './MUI/ShowActiveUsers'
 
 const Chat = () => {
 
     const { user, setOpen, chatWithWho } = useContext(UserContext);
-    const { chatPhase, setChatPhase } = useContext(ChatContext);
+    const { chatPhase } = useContext(ChatContext);
 
     useEffect(() => {
         if (!user?.displayName) setOpen(true);

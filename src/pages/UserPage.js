@@ -10,12 +10,12 @@ import Users from './Users';
 
 const UserPage = () => {
 
-    const { chatPhase, setChatPhase } = useContext(ChatContext);
+    const { setChatPhase } = useContext(ChatContext);
 
 
     const { user, setChatWithWho } = useContext(UserContext);
 
-    const { userPageData, loading, error } = useFetchFriends();
+    const { userPageData } = useFetchFriends();
 
 
     const handleChatWithWho = (clickedUser) => {

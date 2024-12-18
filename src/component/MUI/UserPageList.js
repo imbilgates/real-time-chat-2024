@@ -19,7 +19,7 @@ export default function UserPageList({ handleChatWithWho, handleRemoveItem }) {
 
   const { users } = useUsersGetLog();
 
-  const { userPageData, loading, error } = useFetchFriends();
+  const { userPageData, loading } = useFetchFriends();
 
 
   // Function to find a user by ID from the users list
