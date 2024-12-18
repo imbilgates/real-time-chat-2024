@@ -16,6 +16,7 @@ const useUsersGetLog = () => {
           usersList.push(doc.data());
         });
         setUsers(usersList);
+
       } catch (err) {
         setError(err);
         console.error("Error getting all users:", err);
@@ -31,4 +32,3 @@ const useUsersGetLog = () => {
 };
 
 export default useUsersGetLog;
-  
