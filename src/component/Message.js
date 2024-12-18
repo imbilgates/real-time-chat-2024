@@ -4,10 +4,8 @@ import { ChatContext } from '../context/ChatContext';
 import { UserContext } from '../context/UserContext';
 import { doc, onSnapshot, updateDoc, arrayRemove } from 'firebase/firestore';
 import { db } from '../config/firebase-config';
-import UserPage from '../pages/UserPage';
 import { CircularProgress } from '@mui/material';
 import { convertTimestamp } from '../utils/commonFunctions';
-import GroupChatPage from '../pages/GroupChatPage';
 
 const Message = () => {
 
